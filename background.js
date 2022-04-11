@@ -2,8 +2,13 @@ async function main() {
   "use strict";
   console.log("deepl");
   EventTarget.prototype.on = EventTarget.prototype.addEventListener;
-
   const encoder = new TextEncoder();
+
+  const deepl_auth_key = await new Promise((done, fail) => {
+    chrome.storage.sync.get(["deepl_auth_key"], ({ deepl_auth_key }) => {
+      done(deepl_auth_key);
+    });
+  });
 
   async function digestMessage(message) {
     const data = encoder.encode(message);
@@ -17,7 +22,7 @@ async function main() {
     console.log("fetch api");
     const url = new URL(`https://api.deepl.com/v2/translate`);
     url.searchParams.set("text", text);
-    url.searchParams.set("auth_key", auth_key);
+    url.searchParams.set("auth_key", deepl_auth_key);
     url.searchParams.set("free_api", false);
     url.searchParams.set("target_lang", "JA");
 

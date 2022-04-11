@@ -4,10 +4,7 @@
   "manifest_version": 3,
   "version": "0.1",
   "description": "Jxck Extension Pack",
-  "permissions": [
-    "activeTab",
-    "scripting"
-  ],
+  "permissions": ["activeTab", "scripting", "storage"],
   "options_page": "options.html",
   "background": {
     "service_worker": "background.js"
