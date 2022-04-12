@@ -52,8 +52,8 @@ async function main() {
 
   function traverse() {
     console.log("traverse");
-    const article = document.querySelector("article")
-    article.querySelectorAll("p").forEach(async (p) => {
+    const target = Array.from(document.querySelectorAll('body, main, article')).reduce((curr, prev) => curr || prev)
+    target.querySelectorAll("p").forEach(async (p) => {
       // console.log({p})
       const text = p.textContent;
       const translated = await translate(text);
@@ -63,7 +63,7 @@ async function main() {
       appendChild(p, textNode);
     });
 
-    article
+    target
       .querySelectorAll("h2, h3, h4, h5, h6, li, th, td")
       .forEach(async (h) => {
         const text = h.textContent;
