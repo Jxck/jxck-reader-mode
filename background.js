@@ -52,7 +52,7 @@ async function main() {
 
   function traverse() {
     console.log("traverse");
-    const target = Array.from(document.querySelectorAll('body, main, article')).reduce((curr, prev) => curr || prev)
+    const target = Array.from(document.querySelectorAll('body, main, article')).reduce((curr, prev) => prev || curr)
     target.querySelectorAll("p").forEach(async (p) => {
       // console.log({p})
       const text = p.textContent;
