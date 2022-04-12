@@ -1,7 +1,7 @@
 {
   "name": "ext-jxck-pack",
   "icons": {
-    "128": "jxck.128x128.png"
+    "128": "128x128.png"
   },
   "action": {},
   "manifest_version": 3,
