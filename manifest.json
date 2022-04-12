@@ -1,12 +1,12 @@
 {
-  "name": "ext-jxck-pack",
+  "name": "jxck-reader-mode",
   "icons": {
     "128": "128x128.png"
   },
   "action": {},
   "manifest_version": 3,
   "version": "0.1",
-  "description": "Jxck Extension Pack",
+  "description": "Make web page readable for Japanese developer",
   "permissions": ["activeTab", "scripting", "storage"],
   "options_page": "options.html",
   "background": {
