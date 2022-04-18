@@ -52,8 +52,7 @@ async function main() {
 
   function traverse() {
     console.log("traverse");
-    const target = Array.from(document.querySelectorAll('body, main, article')).reduce((curr, prev) => prev || curr)
-    target.querySelectorAll("p").forEach(async (p) => {
+    document.querySelectorAll(':not(header):not(footer):not(aside) p').forEach(async (p) => {
       // console.log({p})
       const text = p.textContent;
       const translated = await translate(text);
@@ -63,8 +62,7 @@ async function main() {
       appendChild(p, textNode);
     });
 
-    target
-      .querySelectorAll("h2, h3, h4, h5, h6, li, th, td")
+    document.querySelectorAll(':not(header):not(footer):not(aside) :is(h2, h3, h4, h5, h6, li, th, td)')
       .forEach(async (h) => {
         const text = h.textContent;
         const translated = await translate(text);
