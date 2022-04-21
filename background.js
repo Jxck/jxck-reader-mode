@@ -64,9 +64,11 @@ async function main() {
 
     document.querySelectorAll(':not(header):not(footer):not(aside) :is(h2, h3, h4, h5, h6, li, th, td)')
       .forEach(async (h) => {
-        const text = h.textContent;
-        const translated = await translate(text);
-        h.innerHTML += `<br>${translated}`;
+        if (h.children[0]?.nodeName !== "P") {
+          const text = h.textContent;
+          const translated = await translate(text);
+          h.innerHTML += `<br>${translated}`;
+        }
       });
   }
   traverse();
