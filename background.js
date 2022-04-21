@@ -10,8 +10,8 @@ async function main() {
     });
   });
 
-  const FULL_HALF = /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[a-zA-Z0-9]+)/gu
-  const HALF_FULL = /(?<half>[a-zA-Z0-9]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu
+  const FULL_HALF = /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu
+  const HALF_FULL = /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu
   function spacer(text) {
     return text
       .replaceAll(FULL_HALF, (all, left, right) => {
@@ -41,7 +41,7 @@ async function main() {
     const req = await fetch(url, { method: "post" });
     const { translations } = await req.json();
     const translated = translations.map(({ text }) => text).join(" ");
-    return spacer(translated);
+    return translated;
   }
 
   async function translate(text) {
@@ -49,13 +49,13 @@ async function main() {
     const cache = localStorage.getItem(hash);
     if (cache) {
       console.log("cache hit");
-      return cache;
+      return spacer(cache);
     }
 
     const translated = await deepl(text);
     const key = await digestMessage(text);
     localStorage.setItem(key, translated);
-    return translated;
+    return spacer(translated);
   }
 
   function appendChild(target, node) {
