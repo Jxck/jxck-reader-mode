@@ -10,6 +10,18 @@ async function main() {
     });
   });
 
+  const FULL_HALF = /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[a-zA-Z0-9]+)/gu
+  const HALF_FULL = /(?<half>[a-zA-Z0-9]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu
+  function spacer(text) {
+    return text
+      .replaceAll(FULL_HALF, (all, left, right) => {
+        return `${left} ${right}`
+      })
+      .replaceAll(HALF_FULL, (all, left, right) => {
+        return `${left} ${right}`
+      })
+  }
+
   async function digestMessage(message) {
     const data = encoder.encode(message);
     const sha256 = await crypto.subtle.digest("SHA-256", data);
@@ -29,7 +41,7 @@ async function main() {
     const req = await fetch(url, { method: "post" });
     const { translations } = await req.json();
     const translated = translations.map(({ text }) => text).join(" ");
-    return translated;
+    return spacer(translated);
   }
 
   async function translate(text) {
