@@ -1,4 +1,4 @@
-# ext-jxck-pack
+# jxck-reader-mode
 
-- `zip -r ext-jxck-pack.zip ext-jxck-pack`
+- `zip -r jxck-reader-mode.zip jxck-reader-mode`
 - https://chrome.google.com/webstore/devconsole/
