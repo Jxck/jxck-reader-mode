@@ -3,7 +3,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
     GCP: "translate-via-gcp",
     DEEPL: "translate-via-deepl",
   };
-  
+
   console.log(via);
   EventTarget.prototype.on = EventTarget.prototype.addEventListener;
   const encoder = new TextEncoder();
@@ -107,12 +107,15 @@ async function main(via = TRANSLATE_VIA.GCP) {
   function traverse(via) {
     console.log("traverse");
     document
-      .querySelectorAll(":not(header):not(footer):not(aside) p")
+      .querySelectorAll(
+        ":not(header):not(footer):not(aside) p:not([translate=no])"
+      )
       .forEach(async (p) => {
         // console.log({p})
         const text = p.textContent;
         const translated = await translate(text, via);
         const textNode = document.createElement("p");
+        textNode.setAttribute("translate", "no");
         textNode.textContent = translated;
         console.log(textNode);
         appendChild(p, textNode);
@@ -120,7 +123,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
 
     document
       .querySelectorAll(
-        ":not(header):not(footer):not(aside) :is(h2, h3, h4, h5, h6, li, th, td)"
+        ":not(header):not(footer):not(aside) :is(h2, h3, h4, h5, h6, li, th, td):not([translate=no])"
       )
       .forEach(async (h) => {
         if (h.children[0]?.nodeName !== "P") {
