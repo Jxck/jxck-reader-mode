@@ -5,7 +5,7 @@
   },
   "action": {},
   "manifest_version": 3,
-  "version": "0.3",
+  "version": "0.4",
   "description": "Make web page readable for Japanese developer",
   "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
   "options_page": "options.html",
