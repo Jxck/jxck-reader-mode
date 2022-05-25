@@ -1,6 +1,10 @@
-async function main() {
-  "use strict";
-  console.log("deepl");
+async function main(via = TRANSLATE_VIA.GCP) {
+  const TRANSLATE_VIA = {
+    GCP: "translate-via-gcp",
+    DEEPL: "translate-via-deepl",
+  };
+  
+  console.log(via);
   EventTarget.prototype.on = EventTarget.prototype.addEventListener;
   const encoder = new TextEncoder();
 
@@ -35,7 +39,7 @@ async function main() {
     return hash;
   }
 
-  async function deepl(text) {
+  async function translate_via_deepl(text) {
     console.log("fetch deepl api");
     const Endpoint = `https://api.deepl.com/v2/translate`;
     const url = new URL(Endpoint);
@@ -50,7 +54,7 @@ async function main() {
     return translated;
   }
 
-  async function googletrans(text) {
+  async function translate_via_gcp(text) {
     console.log("fetch google translate api");
     const Endpoint = `https://translation.googleapis.com/language/translate/v2`;
     const url = new URL(Endpoint);
@@ -71,21 +75,28 @@ async function main() {
         );
       })
       .join(" ");
-    console.log({ translated });
     return translated;
   }
 
-  async function translate(text) {
+  async function translate(text, via) {
     const hash = await digestMessage(text);
-    // const cache = localStorage.getItem(hash);
-    // if (cache) {
-    //   console.log("cache hit");
-    //   return spacer(cache);
-    // }
+    const key = `${via}-${hash}`;
+    const cache = localStorage.getItem(key);
+    if (cache) {
+      console.log("cache hit");
+      return spacer(cache);
+    }
 
-    const translated = await googletrans(text);
-    const key = await digestMessage(text);
-    // TODO: localStorage.setItem(key, translated);
+    const translated = await (async () => {
+      if (via === TRANSLATE_VIA.DEEPL) {
+        return await translate_via_deepl(text);
+      }
+      if (via === TRANSLATE_VIA.GCP) {
+        return await translate_via_gcp(text);
+      }
+    })();
+
+    // localStorage.setItem(key, translated);
     return spacer(translated);
   }
 
@@ -93,14 +104,14 @@ async function main() {
     target.parentNode.insertBefore(node, target.nextSibling);
   }
 
-  function traverse() {
+  function traverse(via) {
     console.log("traverse");
     document
       .querySelectorAll(":not(header):not(footer):not(aside) p")
       .forEach(async (p) => {
         // console.log({p})
         const text = p.textContent;
-        const translated = await translate(text);
+        const translated = await translate(text, via);
         const textNode = document.createElement("p");
         textNode.textContent = translated;
         console.log(textNode);
@@ -114,17 +125,60 @@ async function main() {
       .forEach(async (h) => {
         if (h.children[0]?.nodeName !== "P") {
           const text = h.textContent;
-          const translated = await translate(text);
+          const translated = await translate(text, via);
           h.innerHTML += `<br>${translated}`;
         }
       });
   }
-  traverse();
+  traverse(via);
 }
 
+const TRANSLATE_VIA = {
+  GCP: "translate-via-gcp",
+  DEEPL: "translate-via-deepl",
+};
+
+const updateContextMenus = async () => {
+  await chrome.contextMenus.removeAll();
+  chrome.contextMenus.create({
+    id: TRANSLATE_VIA.GCP,
+    title: "translate via gcp",
+    contexts: ["all"],
+  });
+  chrome.contextMenus.create({
+    id: TRANSLATE_VIA.DEEPL,
+    title: "translate via deepl",
+    contexts: ["all"],
+  });
+};
+
+chrome.runtime.onInstalled.addListener(updateContextMenus);
+chrome.runtime.onStartup.addListener(updateContextMenus);
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  const id = info.menuItemId;
+
+  if (id === TRANSLATE_VIA.DEEPL) {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: main,
+      args: [TRANSLATE_VIA.DEEPL],
+    });
+  }
+
+  if (id === TRANSLATE_VIA.GCP) {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: main,
+      args: [TRANSLATE_VIA.GCP],
+    });
+  }
+});
+
 chrome.action.onClicked.addListener((tab) => {
+  console.log(tab);
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: main,
+    args: [TRANSLATE_VIA.GCP],
   });
 });
