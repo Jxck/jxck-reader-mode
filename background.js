@@ -96,7 +96,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
       }
     })();
 
-    // localStorage.setItem(key, translated);
+    localStorage.setItem(key, translated);
     return spacer(translated);
   }
 
