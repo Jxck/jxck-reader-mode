@@ -30,11 +30,11 @@ async function main() {
     return hash;
   }
 
-  const URL = `https://script.google.com/macros/s/AKfycby0rOSLaX4g8YdQsYKLaGZ-kY8eBTdPjnPfCXwmxBu7FcxC-IY3Hpr48EkyNUEklY16sQ/exec`
+  const Endpoint = `https://script.google.com/macros/s/AKfycby0rOSLaX4g8YdQsYKLaGZ-kY8eBTdPjnPfCXwmxBu7FcxC-IY3Hpr48EkyNUEklY16sQ/exec`
   // `https://api.deepl.com/v2/translate`
   async function deepl(text) {
     console.log("fetch api");
-    const url = new URL(URL);
+    const url = new URL(Endpoint);
     url.searchParams.set("text", text);
     url.searchParams.set("auth_key", deepl_auth_key);
     url.searchParams.set("free_api", false);
