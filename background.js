@@ -4,22 +4,27 @@ async function main() {
   EventTarget.prototype.on = EventTarget.prototype.addEventListener;
   const encoder = new TextEncoder();
 
-  const deepl_auth_key = await new Promise((done, fail) => {
-    chrome.storage.sync.get(["deepl_auth_key"], ({ deepl_auth_key }) => {
-      done(deepl_auth_key);
-    });
+  const { deepl_auth_key, gcp_api_key } = await new Promise((done, fail) => {
+    chrome.storage.sync.get(
+      ["deepl_auth_key", "gcp_api_key"],
+      ({ deepl_auth_key, gcp_api_key }) => {
+        done({ deepl_auth_key, gcp_api_key });
+      }
+    );
   });
 
-  const FULL_HALF = /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu
-  const HALF_FULL = /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu
+  const FULL_HALF =
+    /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu;
+  const HALF_FULL =
+    /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu;
   function spacer(text) {
     return text
       .replaceAll(FULL_HALF, (all, left, right) => {
-        return `${left} ${right}`
+        return `${left} ${right}`;
       })
       .replaceAll(HALF_FULL, (all, left, right) => {
-        return `${left} ${right}`
-      })
+        return `${left} ${right}`;
+      });
   }
 
   async function digestMessage(message) {
@@ -30,10 +35,9 @@ async function main() {
     return hash;
   }
 
-  const Endpoint = `https://script.google.com/macros/s/AKfycby0rOSLaX4g8YdQsYKLaGZ-kY8eBTdPjnPfCXwmxBu7FcxC-IY3Hpr48EkyNUEklY16sQ/exec`
-  // `https://api.deepl.com/v2/translate`
   async function deepl(text) {
-    console.log("fetch api");
+    console.log("fetch deepl api");
+    const Endpoint = `https://api.deepl.com/v2/translate`;
     const url = new URL(Endpoint);
     url.searchParams.set("text", text);
     url.searchParams.set("auth_key", deepl_auth_key);
@@ -46,17 +50,42 @@ async function main() {
     return translated;
   }
 
+  async function googletrans(text) {
+    console.log("fetch google translate api");
+    const Endpoint = `https://translation.googleapis.com/language/translate/v2`;
+    const url = new URL(Endpoint);
+    url.searchParams.set("q", text);
+    url.searchParams.set("target", "ja");
+    url.searchParams.set("format", "text");
+    url.searchParams.set("source", "en");
+    url.searchParams.set("model", "base");
+    url.searchParams.set("key", gcp_api_key);
+    const req = await fetch(url, {
+      method: "post",
+    });
+    const { data } = await req.json();
+    const translated = data.translations
+      .map(({ translatedText }) => {
+        return translatedText.replaceAll(/[！-～]/g, (c) =>
+          String.fromCharCode(c.charCodeAt(0) - 0xfee0)
+        );
+      })
+      .join(" ");
+    console.log({ translated });
+    return translated;
+  }
+
   async function translate(text) {
     const hash = await digestMessage(text);
-    const cache = localStorage.getItem(hash);
-    if (cache) {
-      console.log("cache hit");
-      return spacer(cache);
-    }
+    // const cache = localStorage.getItem(hash);
+    // if (cache) {
+    //   console.log("cache hit");
+    //   return spacer(cache);
+    // }
 
-    const translated = await deepl(text);
+    const translated = await googletrans(text);
     const key = await digestMessage(text);
-    localStorage.setItem(key, translated);
+    // TODO: localStorage.setItem(key, translated);
     return spacer(translated);
   }
 
@@ -66,17 +95,22 @@ async function main() {
 
   function traverse() {
     console.log("traverse");
-    document.querySelectorAll(':not(header):not(footer):not(aside) p').forEach(async (p) => {
-      // console.log({p})
-      const text = p.textContent;
-      const translated = await translate(text);
-      const textNode = document.createElement("p");
-      textNode.textContent = translated;
-      console.log(textNode);
-      appendChild(p, textNode);
-    });
+    document
+      .querySelectorAll(":not(header):not(footer):not(aside) p")
+      .forEach(async (p) => {
+        // console.log({p})
+        const text = p.textContent;
+        const translated = await translate(text);
+        const textNode = document.createElement("p");
+        textNode.textContent = translated;
+        console.log(textNode);
+        appendChild(p, textNode);
+      });
 
-    document.querySelectorAll(':not(header):not(footer):not(aside) :is(h2, h3, h4, h5, h6, li, th, td)')
+    document
+      .querySelectorAll(
+        ":not(header):not(footer):not(aside) :is(h2, h3, h4, h5, h6, li, th, td)"
+      )
       .forEach(async (h) => {
         if (h.children[0]?.nodeName !== "P") {
           const text = h.textContent;
