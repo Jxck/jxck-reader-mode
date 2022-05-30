@@ -132,6 +132,38 @@ async function main(via = TRANSLATE_VIA.GCP) {
           h.innerHTML += `<br>${translated}`;
         }
       });
+
+    if (location.host === "bugs.chromium.org") {
+      function queryShadow([head, ...tail], host = document) {
+        return Array.from(host.querySelectorAll(head)).flatMap((e) => {
+          if (e.shadowRoot) {
+            return queryShadow(tail, e.shadowRoot);
+          }
+          return e;
+        });
+      }
+
+      queryShadow([
+        "mr-comment-list",
+        "mr-comment",
+        "mr-comment-content",
+        "span",
+      ]).forEach(async (span) => {
+        console.log(span);
+        const text = span.textContent;
+        const translated = await translate(text, via);
+        span.innerHTML += `<br>${translated}`;
+      });
+
+      queryShadow(["mr-description", "mr-comment-content", "span"]).forEach(
+        async (span) => {
+          console.log(span);
+          const text = span.textContent;
+          const translated = await translate(text, via);
+          span.innerHTML += `<br>${translated}`;
+        }
+      );
+    }
   }
   traverse(via);
 }
