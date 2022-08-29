@@ -108,7 +108,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
     console.log("traverse");
     document
       .querySelectorAll(
-        ":not(header):not(footer):not(aside) p:not([translate=no])"
+        ":not(header):not(footer):not(aside):not(.repository-container-header) p:not([translate=no])"
       )
       .forEach(async (p) => {
         // console.log({p})
