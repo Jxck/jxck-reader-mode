@@ -8,14 +8,15 @@ async function main(via = TRANSLATE_VIA.GCP) {
   EventTarget.prototype.on = EventTarget.prototype.addEventListener;
   const encoder = new TextEncoder();
 
-  const { deepl_auth_key, gcp_api_key } = await new Promise((done, fail) => {
+  const { deepl_auth_key, gcp_api_key, text_color } = await new Promise((done, fail) => {
     chrome.storage.sync.get(
-      ["deepl_auth_key", "gcp_api_key"],
-      ({ deepl_auth_key, gcp_api_key }) => {
-        done({ deepl_auth_key, gcp_api_key });
+      ["deepl_auth_key", "gcp_api_key", "text_color"],
+      ({ deepl_auth_key, gcp_api_key, text_color }) => {
+        done({ deepl_auth_key, gcp_api_key, text_color });
       }
     );
   });
+  console.log({text_color})
 
   const FULL_HALF =
     /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu;
@@ -106,6 +107,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
 
   function traverse(via) {
     console.log("traverse");
+
     document
       .querySelectorAll(
         ":not(header):not(footer):not(aside):not(.repository-container-header) p:not([translate=no])"
@@ -116,6 +118,8 @@ async function main(via = TRANSLATE_VIA.GCP) {
         const translated = await translate(text, via);
         const textNode = document.createElement("p");
         textNode.setAttribute("translate", "no");
+        console.log({text_color})
+        textNode.style.color = text_color;
         textNode.textContent = translated;
         console.log(textNode);
         appendChild(p, textNode);
@@ -129,7 +133,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
         if (h.children[0]?.nodeName !== "P") {
           const text = h.textContent;
           const translated = await translate(text, via);
-          h.innerHTML += `<br>${translated}`;
+          h.innerHTML += `<br><span style="color: ${text_color}">${translated}</span>`;
         }
       });
 
