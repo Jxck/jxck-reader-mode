@@ -110,6 +110,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
   function traverse(via) {
     console.log("traverse")
 
+    // Pre Edit
     if (location.host.endsWith("inoreader.com")) {
       // card view
       document
@@ -148,6 +149,10 @@ async function main(via = TRANSLATE_VIA.GCP) {
       return
     }
 
+    if (location.host === "developer.mozilla.org") {
+      document.querySelector("header").remove()
+    }
+
     document
       .querySelectorAll(
         ":not(header):not(footer):not(aside):not(.repository-container-header) p:not([translate=no])"
@@ -177,6 +182,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
         }
       })
 
+    // Post Edit
     if (location.host === "bugs.chromium.org") {
       function queryShadow([head, ...tail], host = document) {
         return Array.from(host.querySelectorAll(head)).flatMap((e) => {
