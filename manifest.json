@@ -1,11 +1,11 @@
 {
+  "version": "0.9",
   "name": "jxck-reader-mode",
   "icons": {
     "128": "128x128.png"
   },
   "action": {},
   "manifest_version": 3,
-  "version": "0.9",
   "description": "Make web page readable for Japanese developer",
   "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
   "options_page": "options.html",
