@@ -38,7 +38,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
     const data = encoder.encode(message)
     const sha256 = await crypto.subtle.digest("SHA-256", data)
     const hash = btoa(String.fromCharCode(...new Uint8Array(sha256)))
-    console.log({ message, hash })
+    // console.log({ message, hash })
     return hash
   }
 
@@ -86,7 +86,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
     const key = `${via}-${hash}`
     const cache = localStorage.getItem(key)
     if (cache) {
-      console.log("cache hit")
+      // console.log("cache hit")
       return spacer(cache)
     }
 
@@ -181,6 +181,37 @@ async function main(via = TRANSLATE_VIA.GCP) {
           h.innerHTML += `<br><span style="color: ${text_color}">${translated}</span>`
         }
       })
+
+    document.querySelectorAll("pre").forEach(async (pre) => {
+      const textContent = pre.textContent
+      const lines = textContent.split("\n\n")
+
+      pre.innerHTML = ""
+      for await (const line of lines) {
+        console.log({ line })
+
+        const text = line
+          .replaceAll("\n", " ")
+          .replaceAll(".  ", ".\n")
+          .replaceAll("\n ", "\n")
+          .trim()
+        console.log({ text })
+
+        const translated = (await translate(text, via))
+          .replaceAll("\n ", "\n")
+          .trim()
+        console.log({ translated })
+
+        const textNode = document.createElement("p")
+        textNode.textContent = text
+        pre.appendChild(textNode)
+
+        const translatedNode = document.createElement("p")
+        translatedNode.style.color = text_color
+        translatedNode.textContent = translated
+        pre.appendChild(translatedNode)
+      }
+    })
 
     // Post Edit
     if (location.host === "bugs.chromium.org") {
