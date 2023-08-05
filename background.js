@@ -182,7 +182,7 @@ async function main(via = TRANSLATE_VIA.GCP) {
         }
       })
 
-    document.querySelectorAll("pre").forEach(async (pre) => {
+    document.querySelectorAll("pre:not(:has(code))").forEach(async (pre) => {
       const textContent = pre.textContent
       const lines = textContent.split("\n\n")
 
@@ -249,9 +249,14 @@ async function main(via = TRANSLATE_VIA.GCP) {
   traverse(via)
 }
 
+function clear() {
+  localStorage.clear()
+}
+
 const TRANSLATE_VIA = {
   GCP: "translate-via-gcp",
   DEEPL: "translate-via-deepl",
+  CLEAR: "clear-translate",
 }
 
 const updateContextMenus = async () => {
@@ -264,6 +269,11 @@ const updateContextMenus = async () => {
   chrome.contextMenus.create({
     id: TRANSLATE_VIA.DEEPL,
     title: "translate via deepl",
+    contexts: ["all"],
+  })
+  chrome.contextMenus.create({
+    id: TRANSLATE_VIA.CLEAR,
+    title: "clear translate result",
     contexts: ["all"],
   })
 }
@@ -286,6 +296,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       target: { tabId: tab.id },
       function: main,
       args: [TRANSLATE_VIA.GCP],
+    })
+  }
+
+  if (id === TRANSLATE_VIA.CLEAR) {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: clear,
+      args: [],
     })
   }
 })
