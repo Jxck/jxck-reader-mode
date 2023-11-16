@@ -44,7 +44,9 @@ async function main(via = TRANSLATE_VIA.GCP) {
 
   async function translate_via_deepl(text) {
     console.log("fetch deepl api")
-    const Endpoint = `https://api.deepl.com/v2/translate`
+    const Endpoint = deepl_auth_key.endsWith(":fx")
+      ? `https://api-free.deepl.com/v2/translate`
+      : `https://api.deepl.com/v2/translate`
     const url = new URL(Endpoint)
     url.searchParams.set("text", text)
     url.searchParams.set("auth_key", deepl_auth_key)
