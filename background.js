@@ -1,4 +1,4 @@
-async function main(via = TRANSLATE_VIA.GCP) {
+async function main(via = TRANSLATE_VIA.DEEPL) {
   const TRANSLATE_VIA = {
     GCP: "translate-via-gcp",
     DEEPL: "translate-via-deepl",
