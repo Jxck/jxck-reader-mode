@@ -315,6 +315,6 @@ chrome.action.onClicked.addListener((tab) => {
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: main,
-    args: [TRANSLATE_VIA.GCP],
+    args: [TRANSLATE_VIA.DEEPL],
   })
 })
