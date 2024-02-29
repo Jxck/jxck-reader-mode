@@ -112,7 +112,9 @@ async function main(via = TRANSLATE_VIA.DEEPL) {
   function traverse(via) {
     console.log("traverse")
 
-    // Pre Edit
+    /** Pre Edit */
+
+    // Inoreader
     if (location.host.endsWith("inoreader.com")) {
       // card view
       document
@@ -151,12 +153,9 @@ async function main(via = TRANSLATE_VIA.DEEPL) {
       return
     }
 
-    if (location.host === "developer.mozilla.org") {
-      document.querySelector("header").remove()
-    }
-
-    // header の下じゃない h1 は h1:not(header h1) のように指定する
-    // 複数の場合は :is() で列挙する
+    // 全ての <p> を翻訳し、下に <p> を作って追加
+    //  header の下じゃない h1 は h1:not(header h1) のように指定する
+    //  複数の場合は :is() で列挙する
     document
       .querySelectorAll(
         "p:not([translate=no]):is(:not(:is(header,footer,aside) *))"
@@ -167,13 +166,13 @@ async function main(via = TRANSLATE_VIA.DEEPL) {
         const translated = await translate(text, via)
         const textNode = document.createElement("p")
         textNode.setAttribute("translate", "no")
-        console.log({ text_color })
         textNode.style.color = text_color
         textNode.textContent = translated
         console.log(textNode)
         appendChild(p, textNode)
       })
 
+    // h2 ~ h6, li, th, td は、 <p> 追加ではなく <br> で追記
     document
       .querySelectorAll(
         ":is(h2, h3, h4, h5, h6, li, th, td):not([translate=no]):is(:not(:is(header, footer, aside) *))"
@@ -217,7 +216,9 @@ async function main(via = TRANSLATE_VIA.DEEPL) {
       }
     })
 
-    // Post Edit
+    /** Post Edit */
+
+    // Chromium
     if (location.host === "bugs.chromium.org") {
       function queryShadow([head, ...tail], host = document) {
         return Array.from(host.querySelectorAll(head)).flatMap((e) => {
