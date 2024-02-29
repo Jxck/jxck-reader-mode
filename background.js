@@ -155,9 +155,11 @@ async function main(via = TRANSLATE_VIA.DEEPL) {
       document.querySelector("header").remove()
     }
 
+    // header の下じゃない h1 は h1:not(header h1) のように指定する
+    // 複数の場合は :is() で列挙する
     document
       .querySelectorAll(
-        ":not(header):not(footer):not(aside):not(.repository-container-header) p:not([translate=no])"
+        "p:not([translate=no]):is(:not(:is(header,footer,aside) *))"
       )
       .forEach(async (p) => {
         // console.log({p})
@@ -174,7 +176,7 @@ async function main(via = TRANSLATE_VIA.DEEPL) {
 
     document
       .querySelectorAll(
-        ":not(header):not(footer):not(aside) :is(h2, h3, h4, h5, h6, li, th, td):not([translate=no])"
+        ":is(h2, h3, h4, h5, h6, li, th, td):not([translate=no]):is(:not(:is(header, footer, aside) *))"
       )
       .forEach(async (h) => {
         if (h.children[0]?.nodeName !== "P") {
