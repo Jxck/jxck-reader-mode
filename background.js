@@ -185,36 +185,55 @@ async function main(via = TRANSLATE_VIA.DEEPL) {
         }
       })
 
-    document.querySelectorAll("pre:not(:has(code))").forEach(async (pre) => {
-      const textContent = pre.textContent
-      const lines = textContent.split("\n\n")
+    // ML など、 pre で改行されてる文章を整形して翻訳する
+    document
+      .querySelectorAll("pre:not(:is(:has(code), div.highlight pre))")
+      .forEach(async (pre) => {
+        const textContent = pre.textContent
 
-      pre.innerHTML = ""
-      for await (const line of lines) {
-        console.log({ line })
+        // 段落で分割する
+        const sections = textContent.split("\n\n").map((section) => {
+          // セクションを整形
+          console.log({ section })
 
-        const text = line
-          .replaceAll("\n", " ")
-          .replaceAll(".  ", ".\n")
-          .replaceAll("\n ", "\n")
-          .trim()
-        console.log({ text })
+          // 引用 `>` で始まっているかを確認
+          if (section.startsWith("> ")) {
+            // そのセクション全部の `>` を消して一文に連結
+            // 文頭の `>` のみ残す
+            // `>>` となってる場合は失敗するがよし
+            section = section.replaceAll("\n>")
+            console.log({blockquote: section})
+          }
 
-        const translated = (await translate(text, via))
-          .replaceAll("\n ", "\n")
-          .trim()
-        console.log({ translated })
+          // 一行に繋ぐ
+          section = section
+            .replaceAll("\n", " ")
+            .replaceAll(".  ", ".\n")
+            .replaceAll("\n ", "\n")
+            .trim()
+          console.log({ section })
+          return section
+        })
 
-        const textNode = document.createElement("p")
-        textNode.textContent = text
-        pre.appendChild(textNode)
+        pre.innerHTML = ""
 
-        const translatedNode = document.createElement("p")
-        translatedNode.style.color = text_color
-        translatedNode.textContent = translated
-        pre.appendChild(translatedNode)
-      }
-    })
+        // セクションごとに翻訳
+        for await (const section of sections) {
+          const translated = (await translate(section, via))
+            .replaceAll("\n ", "\n")
+            .trim()
+          console.log({ translated })
+
+          const textNode = document.createElement("p")
+          textNode.textContent = section
+          pre.appendChild(textNode)
+
+          const translatedNode = document.createElement("p")
+          translatedNode.style.color = text_color
+          translatedNode.textContent = translated
+          pre.appendChild(translatedNode)
+        }
+      })
 
     /** Post Edit */
 
