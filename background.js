@@ -297,7 +297,7 @@ const updateContextMenus = async () => {
   })
   chrome.contextMenus.create({
     id: TRANSLATE_VIA.CLEAR,
-    title: "clear translate result",
+    title: "clear translate cache",
     contexts: ["all"],
   })
 }
