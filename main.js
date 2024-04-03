@@ -28,7 +28,7 @@ export async function main(mode = MODE.DEFAULT) {
         div.style.height = "400px"
       })
       return
-    },
+    }
   }
 
   function clear() {
@@ -195,41 +195,6 @@ export async function main(mode = MODE.DEFAULT) {
           pre.appendChild(translatedNode)
         }
       })
-    }
-
-    /** Post Edit */
-
-    // Chromium
-    if (location.host === "bugs.chromium.org") {
-      function queryShadow([head, ...tail], host = document) {
-        return Array.from(host.querySelectorAll(head)).flatMap((e) => {
-          if (e.shadowRoot) {
-            return queryShadow(tail, e.shadowRoot)
-          }
-          return e
-        })
-      }
-
-      queryShadow([
-        "mr-comment-list",
-        "mr-comment",
-        "mr-comment-content",
-        "span",
-      ]).forEach(async (span) => {
-        console.log(span)
-        const text = span.textContent
-        const translated = await translate(text, options)
-        span.innerHTML += `<br>${translated}`
-      })
-
-      queryShadow(["mr-description", "mr-comment-content", "span"]).forEach(
-        async (span) => {
-          console.log(span)
-          const text = span.textContent
-          const translated = await translate(text, options)
-          span.innerHTML += `<br>${translated}`
-        }
-      )
     }
   }
 
