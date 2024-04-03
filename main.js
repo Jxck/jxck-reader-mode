@@ -143,7 +143,7 @@ export async function main(mode = MODE.DEFAULT) {
     console.log("traverse")
 
     /** Pre Edit */
-    PLUGINS[location.host]()
+    PLUGINS[location.host]?.()
 
     // 全ての <p> を翻訳し、下に <p> を作って追加
     //  header の下じゃない h1 は h1:not(header h1) のように指定する
