@@ -1,30 +1,28 @@
-import main from "./main.js";
+import { main } from "./main.js"
 
-function clear() {
-  localStorage.clear()
-}
-
-const TRANSLATE_VIA = {
+const MODE = {
   GCP: "translate-via-gcp",
   DEEPL: "translate-via-deepl",
   CLEAR: "clear-translate",
+  DEFAULT: "default",
+  DIALOG: "dialog",
 }
 
 const updateContextMenus = async () => {
   await chrome.contextMenus.removeAll()
   chrome.contextMenus.create({
-    id: TRANSLATE_VIA.GCP,
-    title: "translate via gcp",
+    id: MODE.DEFAULT,
+    title: "default mode",
     contexts: ["all"],
   })
   chrome.contextMenus.create({
-    id: TRANSLATE_VIA.DEEPL,
-    title: "translate via deepl",
+    id: MODE.DIALOG,
+    title: "dialog mode",
     contexts: ["all"],
   })
   chrome.contextMenus.create({
-    id: TRANSLATE_VIA.CLEAR,
-    title: "clear translate cache",
+    id: MODE.CLEAR,
+    title: "clear cache",
     contexts: ["all"],
   })
 }
@@ -33,30 +31,11 @@ chrome.runtime.onInstalled.addListener(updateContextMenus)
 chrome.runtime.onStartup.addListener(updateContextMenus)
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   const id = info.menuItemId
-
-  if (id === TRANSLATE_VIA.DEEPL) {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: main,
-      args: [TRANSLATE_VIA.DEEPL],
-    })
-  }
-
-  if (id === TRANSLATE_VIA.GCP) {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: main,
-      args: [TRANSLATE_VIA.GCP],
-    })
-  }
-
-  if (id === TRANSLATE_VIA.CLEAR) {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: clear,
-      args: [],
-    })
-  }
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    function: main,
+    args: [id],
+  })
 })
 
 chrome.action.onClicked.addListener((tab) => {
@@ -64,6 +43,6 @@ chrome.action.onClicked.addListener((tab) => {
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: main,
-    args: [TRANSLATE_VIA.DEEPL],
+    args: [MODE.DEFAULT],
   })
 })
