@@ -28,7 +28,32 @@ export async function main(mode = MODE.DEFAULT) {
         div.style.height = "400px"
       })
       return
-    }
+    },
+    "issues.chromium.org": () => {
+      Array.from(...$$(".child")).map((div) => {
+        const $div = div.cloneNode(true)
+        $div.querySelectorAll("br").forEach(($br) => {
+          $br.replaceWith("\r")
+        })
+        const text = $div.textContent
+          .replaceAll("\r\r", "\n")
+          .replaceAll("\r", " ")
+          .replace(/Bug: (.+?) Change-Id: (.+?)Reviewed-on:.+/, "")
+          .replace("[Empty comment from Monorail migration]", "")
+
+        const lines = text.split("\n").map((line) => line.trim())
+
+        const $container = document.createElement("div")
+        lines.forEach((line) => {
+          if (line === "") return
+          const $p = document.createElement("p")
+          $p.style = "margin: 4px 0"
+          $p.textContent = line.trim()
+          $container.appendChild($p)
+        })
+        div.prepend($container)
+      })
+    },
   }
 
   function clear() {
