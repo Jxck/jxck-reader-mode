@@ -1,23 +1,12 @@
-EventTarget.prototype.on = EventTarget.prototype.addEventListener
-
 export default async function main(via = TRANSLATE_VIA.DEEPL) {
+  EventTarget.prototype.on = EventTarget.prototype.addEventListener
   console.log(via)
 
-  const TRANSLATE_VIA = {
-    GCP: "translate-via-gcp",
-    DEEPL: "translate-via-deepl",
-  }
-  const encoder = new TextEncoder()
-
-  const { promise, resolve, reject } = Promise.withResolvers()
-  chrome.storage.sync.get(["deepl_auth_key", "gcp_api_key", "text_color"], resolve)
-  const { deepl_auth_key, gcp_api_key, text_color } = await promise
-
-  console.log({ text_color })
-
-  const FULL_HALF = /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu
-  const HALF_FULL = /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu
   function spacer(text) {
+    const FULL_HALF =
+      /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu
+    const HALF_FULL =
+      /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu
     return text
       .replaceAll(FULL_HALF, (all, left, right) => `${left} ${right}`)
       .replaceAll(HALF_FULL, (all, left, right) => `${left} ${right}`)
@@ -57,9 +46,7 @@ export default async function main(via = TRANSLATE_VIA.DEEPL) {
     url.searchParams.set("source", "en")
     url.searchParams.set("model", "base")
     url.searchParams.set("key", gcp_api_key)
-    const req = await fetch(url, {
-      method: "post",
-    })
+    const req = await fetch(url, { method: "post" })
     const { data } = await req.json()
     const translated = data.translations
       .map(({ translatedText }) => {
@@ -96,6 +83,21 @@ export default async function main(via = TRANSLATE_VIA.DEEPL) {
   function appendChild(target, node) {
     target.parentNode.insertBefore(node, target.nextSibling)
   }
+
+  const TRANSLATE_VIA = {
+    GCP: "translate-via-gcp",
+    DEEPL: "translate-via-deepl",
+  }
+  const encoder = new TextEncoder()
+
+  const { promise, resolve } = Promise.withResolvers()
+  chrome.storage.sync.get(
+    ["deepl_auth_key", "gcp_api_key", "text_color"],
+    resolve
+  )
+  const { deepl_auth_key, gcp_api_key, text_color } = await promise
+
+  console.log({ text_color })
 
   function traverse(via) {
     console.log("traverse")
@@ -190,7 +192,7 @@ export default async function main(via = TRANSLATE_VIA.DEEPL) {
             // 文頭の `>` のみ残す
             // `>>` となってる場合は失敗するがよし
             section = section.replaceAll("\n>")
-            console.log({blockquote: section})
+            console.log({ blockquote: section })
           }
 
           // 一行に繋ぐ
