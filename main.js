@@ -1,11 +1,12 @@
+EventTarget.prototype.on = EventTarget.prototype.addEventListener
+
 export default async function main(via = TRANSLATE_VIA.DEEPL) {
+  console.log(via)
+
   const TRANSLATE_VIA = {
     GCP: "translate-via-gcp",
     DEEPL: "translate-via-deepl",
   }
-
-  console.log(via)
-  EventTarget.prototype.on = EventTarget.prototype.addEventListener
   const encoder = new TextEncoder()
 
   const { deepl_auth_key, gcp_api_key, text_color } = await new Promise(
