@@ -1,25 +1,26 @@
-<html>
-  <title>options</title>
-  <body>
-    <form id="options">
-      <fieldset>
-        <legend><h2>Deepl</h2></legend>
-        <label for=deepl_auth_key>deepl auth key</label>
-        <input id=deepl_auth_key name=deepl_auth_key type=text>
-        <label for=gcp_api_key>gcp api key</label>
-        <input id=gcp_api_key name=gcp_api_key type=text>
-        <label for=text_color>text color</label>
-        <input id=text_color name=text_color type=text autocomplete="on" list="colors">
-        <datalist id="colors">
-          <option value="#8440f1">
-          <option value="#ccc">
-          <option value="#ffa7a7">
-        </datalist>
-        <button type=submit>save</button>
-      </fieldset>
-    </form>
-  </body>
-</html>
+<!DOCTYPE html>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>options</title>
+<body>
+  <form id="options">
+    <fieldset>
+      <legend><h2>Deepl</h2></legend>
+      <label for=deepl_auth_key>deepl auth key</label>
+      <input id=deepl_auth_key name=deepl_auth_key type=text>
+      <label for=gcp_api_key>gcp api key</label>
+      <input id=gcp_api_key name=gcp_api_key type=text>
+      <label for=text_color>text color</label>
+      <input id=text_color name=text_color type=text autocomplete="on" list="colors">
+      <datalist id="colors">
+        <option value="#8440f1">
+        <option value="#ccc">
+        <option value="#ffa7a7">
+      </datalist>
+      <button type=submit>save</button>
+    </fieldset>
+  </form>
+</body>
 <style>
   input {
     width: 30em;
