@@ -9,37 +9,24 @@ export default async function main(via = TRANSLATE_VIA.DEEPL) {
   }
   const encoder = new TextEncoder()
 
-  const { deepl_auth_key, gcp_api_key, text_color } = await new Promise(
-    (done, fail) => {
-      chrome.storage.sync.get(
-        ["deepl_auth_key", "gcp_api_key", "text_color"],
-        ({ deepl_auth_key, gcp_api_key, text_color }) => {
-          done({ deepl_auth_key, gcp_api_key, text_color })
-        }
-      )
-    }
-  )
+  const { promise, resolve, reject } = Promise.withResolvers()
+  chrome.storage.sync.get(["deepl_auth_key", "gcp_api_key", "text_color"], resolve)
+  const { deepl_auth_key, gcp_api_key, text_color } = await promise
+
   console.log({ text_color })
 
-  const FULL_HALF =
-    /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu
-  const HALF_FULL =
-    /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu
+  const FULL_HALF = /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu
+  const HALF_FULL = /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu
   function spacer(text) {
     return text
-      .replaceAll(FULL_HALF, (all, left, right) => {
-        return `${left} ${right}`
-      })
-      .replaceAll(HALF_FULL, (all, left, right) => {
-        return `${left} ${right}`
-      })
+      .replaceAll(FULL_HALF, (all, left, right) => `${left} ${right}`)
+      .replaceAll(HALF_FULL, (all, left, right) => `${left} ${right}`)
   }
 
   async function digestMessage(message) {
     const data = encoder.encode(message)
     const sha256 = await crypto.subtle.digest("SHA-256", data)
     const hash = btoa(String.fromCharCode(...new Uint8Array(sha256)))
-    // console.log({ message, hash })
     return hash
   }
 
