@@ -4,10 +4,13 @@
   "icons": {
     "128": "128x128.png"
   },
-  "action": {},
+  "action": {
+    "default_popup": "popup.html"
+  },
   "manifest_version": 3,
   "description": "Make web page readable for Japanese developer",
   "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
+  "host_permissions": ["http://*/*", "https://*/*"],
   "options_page": "options.html",
   "background": {
     "service_worker": "background.js",
