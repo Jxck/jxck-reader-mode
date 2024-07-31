@@ -15,5 +15,10 @@
   "background": {
     "service_worker": "background.js",
     "type": "module"
+  },
+  "commands": {
+    "copy-link": {
+      "description": "Copy current URL with Title"
+    }
   }
 }
