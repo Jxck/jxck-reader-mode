@@ -39,7 +39,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 chrome.action.onClicked.addListener((tab) => {
-  console.log(tab);
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: main,
@@ -48,39 +47,40 @@ chrome.action.onClicked.addListener((tab) => {
 });
 
 chrome.commands.onCommand.addListener(async (command) => {
-  console.log({ command });
+  if (command === "copy-link") {
+    await copy_link();
+  }
+});
+
+async function copy_link() {
   // get current tab
   const [tab] = await chrome.tabs.query({
     active: true,
     lastFocusedWindow: true,
   });
-  console.log({ tab });
   const [{ result }] = await chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: async () => {
-      const url =
-        document.querySelector("link[rel=canonical]")?.href || location.href;
+      const canonical = document.querySelector("link[rel=canonical]")?.href;
+      const url = canonical || location.href;
       const title = document.title.trim();
 
-      const body = `
-        <ul>
-          <li>${title}
-            <ul>
-              <li><a href="${url}">${url}</a></li>
-            </ul>
-          </li>
-        </ul>
-      `;
+      const html = `<ul>
+                      <li>${title}
+                        <ul>
+                          <li><a href="${url}">${url}</a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  `;
+      const text = `${title}\n\t${url}`;
 
-      const blob = new Blob([body], { type: "text/html" });
-      const item = [
-        new window.ClipboardItem({
-          "text/html": blob,
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([text], { type: "text/plain" }),
         }),
-      ];
-
-      await navigator.clipboard.write(item);
+      ]);
     },
   });
-  console.log(result);
-});
+}
