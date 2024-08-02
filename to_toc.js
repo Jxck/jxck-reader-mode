@@ -16,7 +16,6 @@ export function to_toc(headings) {
 
   function list([head, ...tail], currentUL) {
     if (head === undefined) return rootUL;
-    console.log(currentUL.level, head.level);
     const li = document.createElement("li");
     li.textContent = head.text;
     li.level = head.level;

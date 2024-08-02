@@ -2,7 +2,6 @@ EventTarget.prototype.on = EventTarget.prototype.addEventListener;
 const $ = document.querySelector.bind(document);
 
 document.addEventListener("DOMContentLoaded", (e) => {
-  console.log(e);
   chrome.storage.sync.get(
     ["deepl_auth_key", "gcp_api_key", "text_color"],
     ({ deepl_auth_key, gcp_api_key, text_color }) => {
