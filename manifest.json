@@ -4,9 +4,6 @@
   "icons": {
     "128": "128x128.png"
   },
-  "action": {
-    "default_popup": "popup.html"
-  },
   "manifest_version": 3,
   "description": "Make web page readable for Japanese developer",
   "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
@@ -15,6 +12,9 @@
   "background": {
     "service_worker": "background.js",
     "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html"
   },
   "commands": {
     "copy-link": {
