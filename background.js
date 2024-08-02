@@ -1,8 +1,6 @@
 import { main } from "./main.js";
 
 const MODE = {
-  GCP: "translate-via-gcp",
-  DEEPL: "translate-via-deepl",
   CLEAR: "clear-translate",
   DEFAULT: "default",
   DIALOG: "dialog",

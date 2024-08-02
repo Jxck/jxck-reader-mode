@@ -4,8 +4,6 @@ export async function main(mode = MODE.DEFAULT) {
   const $$ = document.querySelectorAll.bind(document);
 
   const MODE = {
-    GCP: "translate-via-gcp",
-    DEEPL: "translate-via-deepl",
     CLEAR: "clear-translate",
     DEFAULT: "default",
     DIALOG: "dialog",
