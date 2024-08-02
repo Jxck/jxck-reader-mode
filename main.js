@@ -1,7 +1,7 @@
 export async function main(mode = MODE.DEFAULT) {
-  EventTarget.prototype.on = EventTarget.prototype.addEventListener
-  const $ = document.querySelector.bind(document)
-  const $$ = document.querySelectorAll.bind(document)
+  EventTarget.prototype.on = EventTarget.prototype.addEventListener;
+  const $ = document.querySelector.bind(document);
+  const $$ = document.querySelectorAll.bind(document);
 
   const MODE = {
     GCP: "translate-via-gcp",
@@ -9,141 +9,141 @@ export async function main(mode = MODE.DEFAULT) {
     CLEAR: "clear-translate",
     DEFAULT: "default",
     DIALOG: "dialog",
-  }
+  };
 
-  if (mode === MODE.CLEAR) return clear()
+  if (mode === MODE.CLEAR) return clear();
 
   const PLUGINS = {
     "www.inoreader.com": () => {
       // magazine view
       $$(".article_magazine_content").forEach(async ($div) => {
-        const text = $div.textContent
-        const $p = document.createElement("p")
-        $p.textContent = text
-        $div.textContent = ""
-        $div.appendChild($p)
-        $div.style = "display: block; overflow: unset;"
-      })
+        const text = $div.textContent;
+        const $p = document.createElement("p");
+        $p.textContent = text;
+        $div.textContent = "";
+        $div.appendChild($p);
+        $div.style = "display: block; overflow: unset;";
+      });
       $$(".article_magazine_picture").forEach((div) => {
-        div.style.height = "400px"
-      })
-      return
+        div.style.height = "400px";
+      });
+      return;
     },
     "issues.chromium.org": () => {
       Array.from(...$$(".child")).map((div) => {
-        const $div = div.cloneNode(true)
+        const $div = div.cloneNode(true);
         $div.querySelectorAll("br").forEach(($br) => {
-          $br.replaceWith("\r")
-        })
+          $br.replaceWith("\r");
+        });
         const text = $div.textContent
           .replaceAll("\r\r", "\n")
           .replaceAll("\r", " ")
           .replace(/Bug: (.+?) Change-Id: (.+?)Reviewed-on:.+/, "")
-          .replace("[Empty comment from Monorail migration]", "")
+          .replace("[Empty comment from Monorail migration]", "");
 
-        const lines = text.split("\n").map((line) => line.trim())
+        const lines = text.split("\n").map((line) => line.trim());
 
-        const $container = document.createElement("div")
+        const $container = document.createElement("div");
         lines.forEach((line) => {
-          if (line === "") return
-          const $p = document.createElement("p")
-          $p.style = "margin: 4px 0"
-          $p.textContent = line.trim()
-          $container.appendChild($p)
-        })
-        div.prepend($container)
-      })
+          if (line === "") return;
+          const $p = document.createElement("p");
+          $p.style = "margin: 4px 0";
+          $p.textContent = line.trim();
+          $container.appendChild($p);
+        });
+        div.prepend($container);
+      });
     },
-  }
+  };
 
   function clear() {
-    localStorage.clear()
+    localStorage.clear();
   }
 
   function spacer(text) {
     const FULL_HALF =
-      /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu
+      /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu;
     const HALF_FULL =
-      /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu
+      /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu;
     return text
       .replaceAll(FULL_HALF, (all, left, right) => `${left} ${right}`)
-      .replaceAll(HALF_FULL, (all, left, right) => `${left} ${right}`)
+      .replaceAll(HALF_FULL, (all, left, right) => `${left} ${right}`);
   }
 
   async function digestMessage(message) {
-    const data = encoder.encode(message)
-    const sha256 = await crypto.subtle.digest("SHA-256", data)
-    const hash = btoa(String.fromCharCode(...new Uint8Array(sha256)))
-    return hash
+    const data = encoder.encode(message);
+    const sha256 = await crypto.subtle.digest("SHA-256", data);
+    const hash = btoa(String.fromCharCode(...new Uint8Array(sha256)));
+    return hash;
   }
 
   async function translate_via_deepl(text, auth_key) {
-    console.log("fetch deepl api")
+    console.log("fetch deepl api");
     const Endpoint = auth_key.endsWith(":fx")
       ? `https://api-free.deepl.com/v2/translate`
-      : `https://api.deepl.com/v2/translate`
-    const url = new URL(Endpoint)
-    url.searchParams.set("text", text)
-    url.searchParams.set("auth_key", auth_key)
-    url.searchParams.set("free_api", false)
-    url.searchParams.set("target_lang", "JA")
+      : `https://api.deepl.com/v2/translate`;
+    const url = new URL(Endpoint);
+    url.searchParams.set("text", text);
+    url.searchParams.set("auth_key", auth_key);
+    url.searchParams.set("free_api", false);
+    url.searchParams.set("target_lang", "JA");
 
-    const req = await fetch(url, { method: "post" })
-    const { translations } = await req.json()
-    const translated = translations.map(({ text }) => text).join(" ")
-    return translated
+    const req = await fetch(url, { method: "post" });
+    const { translations } = await req.json();
+    const translated = translations.map(({ text }) => text).join(" ");
+    return translated;
   }
 
   async function translate_via_gcp(text, auth_key) {
-    console.log("fetch google translate api")
-    const Endpoint = `https://translation.googleapis.com/language/translate/v2`
-    const url = new URL(Endpoint)
-    url.searchParams.set("q", text)
-    url.searchParams.set("target", "ja")
-    url.searchParams.set("format", "text")
-    url.searchParams.set("source", "en")
-    url.searchParams.set("model", "base")
-    url.searchParams.set("key", auth_key)
-    const req = await fetch(url, { method: "post" })
-    const { data } = await req.json()
+    console.log("fetch google translate api");
+    const Endpoint = `https://translation.googleapis.com/language/translate/v2`;
+    const url = new URL(Endpoint);
+    url.searchParams.set("q", text);
+    url.searchParams.set("target", "ja");
+    url.searchParams.set("format", "text");
+    url.searchParams.set("source", "en");
+    url.searchParams.set("model", "base");
+    url.searchParams.set("key", auth_key);
+    const req = await fetch(url, { method: "post" });
+    const { data } = await req.json();
     const translated = data.translations
       .map(({ translatedText }) => {
         return translatedText.replaceAll(/[！-～]/g, (c) =>
-          String.fromCharCode(c.charCodeAt(0) - 0xfee0)
-        )
+          String.fromCharCode(c.charCodeAt(0) - 0xfee0),
+        );
       })
-      .join(" ")
-    return translated
+      .join(" ");
+    return translated;
   }
 
   async function translate(text, options) {
-    const key = await digestMessage(text)
-    const cache = localStorage.getItem(key)
+    const key = await digestMessage(text);
+    const cache = localStorage.getItem(key);
     if (cache) {
       // console.log("cache hit")
-      return spacer(cache)
+      return spacer(cache);
     }
 
     const translated = await (async () => {
       if (options.gcp_api_key) {
-        return await translate_via_gcp(text, options.gcp_api_key)
+        return await translate_via_gcp(text, options.gcp_api_key);
       }
-      return await translate_via_deepl(text, options.deepl_auth_key)
-    })()
+      return await translate_via_deepl(text, options.deepl_auth_key);
+    })();
 
-    localStorage.setItem(key, translated)
-    return spacer(translated)
+    localStorage.setItem(key, translated);
+    return spacer(translated);
   }
 
   function appendChild(target, node) {
-    target.parentNode.insertBefore(node, target.nextSibling)
+    target.parentNode.insertBefore(node, target.nextSibling);
   }
 
   function traverse(mode, options) {
-    console.log("traverse")
+    console.log("traverse");
 
     /** Pre Edit */
-    PLUGINS[location.host]?.()
+    PLUGINS[location.host]?.();
 
     // 全ての <p> を翻訳し、下に <p> を作って追加
     //  header の下じゃない h1 は h1:not(header h1) のように指定する
@@ -151,44 +151,44 @@ export async function main(mode = MODE.DEFAULT) {
     $$("p:not([translate=no]):is(:not(:is(header,footer,aside) *))").forEach(
       async (p) => {
         // console.log({p})
-        const text = p.textContent
-        const translated = await translate(text, options)
-        const textNode = document.createElement("p")
-        textNode.setAttribute("translate", "no")
-        textNode.style.color = options.text_color
-        textNode.textContent = translated
-        appendChild(p, textNode)
-      }
-    )
+        const text = p.textContent;
+        const translated = await translate(text, options);
+        const textNode = document.createElement("p");
+        textNode.setAttribute("translate", "no");
+        textNode.style.color = options.text_color;
+        textNode.textContent = translated;
+        appendChild(p, textNode);
+      },
+    );
 
     // h2 ~ h6, li, th, td は、 <p> 追加ではなく <br> で追記
     $$(
-      ":is(h2, h3, h4, h5, h6, li, th, td):not([translate=no]):is(:not(:is(header, footer, aside) *))"
+      ":is(h2, h3, h4, h5, h6, li, th, td):not([translate=no]):is(:not(:is(header, footer, aside) *))",
     ).forEach(async (h) => {
       if (h.children[0]?.nodeName !== "P") {
-        const text = h.textContent
-        const translated = await translate(text, options)
-        h.innerHTML += `<br><span style="color: ${options.text_color}">${translated}</span>`
+        const text = h.textContent;
+        const translated = await translate(text, options);
+        h.innerHTML += `<br><span style="color: ${options.text_color}">${translated}</span>`;
       }
-    })
+    });
 
     if (mode === MODE.DIALOG) {
       // ML など、 pre で改行されてる文章を整形して翻訳する
       $$("pre:not(:is(:has(code), div.highlight pre))").forEach(async (pre) => {
-        const textContent = pre.textContent
+        const textContent = pre.textContent;
 
         // 段落で分割する
         const sections = textContent.split("\n\n").map((section) => {
           // セクションを整形
-          console.log({ section })
+          console.log({ section });
 
           // 引用 `>` で始まっているかを確認
           if (section.startsWith("> ")) {
             // そのセクション全部の `>` を消して一文に連結
             // 文頭の `>` のみ残す
             // `>>` となってる場合は失敗するがよし
-            section = section.replaceAll("\n>")
-            console.log({ blockquote: section })
+            section = section.replaceAll("\n>");
+            console.log({ blockquote: section });
           }
 
           // 一行に繋ぐ
@@ -196,39 +196,39 @@ export async function main(mode = MODE.DEFAULT) {
             .replaceAll("\n", " ")
             .replaceAll(".  ", ".\n")
             .replaceAll("\n ", "\n")
-            .trim()
-          console.log({ section })
-          return section
-        })
+            .trim();
+          console.log({ section });
+          return section;
+        });
 
-        pre.innerHTML = ""
+        pre.innerHTML = "";
 
         // セクションごとに翻訳
         for await (const section of sections) {
           const translated = (await translate(section, options))
             .replaceAll("\n ", "\n")
-            .trim()
-          console.log({ translated })
+            .trim();
+          console.log({ translated });
 
-          const textNode = document.createElement("p")
-          textNode.textContent = section
-          pre.appendChild(textNode)
+          const textNode = document.createElement("p");
+          textNode.textContent = section;
+          pre.appendChild(textNode);
 
-          const translatedNode = document.createElement("p")
-          translatedNode.style.color = options.text_color
-          translatedNode.textContent = translated
-          pre.appendChild(translatedNode)
+          const translatedNode = document.createElement("p");
+          translatedNode.style.color = options.text_color;
+          translatedNode.textContent = translated;
+          pre.appendChild(translatedNode);
         }
-      })
+      });
     }
   }
 
-  const encoder = new TextEncoder()
-  const { promise, resolve } = Promise.withResolvers()
+  const encoder = new TextEncoder();
+  const { promise, resolve } = Promise.withResolvers();
   chrome.storage.sync.get(
     ["deepl_auth_key", "gcp_api_key", "text_color"],
-    resolve
-  )
-  const options = await promise
-  traverse(mode, options)
+    resolve,
+  );
+  const options = await promise;
+  traverse(mode, options);
 }

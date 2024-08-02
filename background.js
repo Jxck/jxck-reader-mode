@@ -58,8 +58,9 @@ chrome.commands.onCommand.addListener(async (command) => {
   const [{ result }] = await chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: async () => {
-      const url = document.querySelector("link[rel=canonical]")?.href || location.href
-      const title = document.title.trim()
+      const url =
+        document.querySelector("link[rel=canonical]")?.href || location.href;
+      const title = document.title.trim();
 
       const body = `
         <ul>

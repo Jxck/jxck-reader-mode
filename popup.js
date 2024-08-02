@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 
 function run() {
   const headings = Array.from(
-    document.querySelectorAll("h1,h2,h3,h4,h5,h6")
+    document.querySelectorAll("h1,h2,h3,h4,h5,h6"),
   ).map((h) => {
     const level = parseInt(h.tagName.replace("H", ""));
     const text = h.textContent.trim();
