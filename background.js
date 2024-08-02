@@ -1,4 +1,4 @@
-import { main } from "./main.js";
+import { translate } from "./translate.js";
 
 const MODE = {
   CLEAR: "clear-translate",
@@ -31,7 +31,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   const id = info.menuItemId;
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    function: main,
+    function: translate,
     args: [id],
   });
 });
@@ -39,7 +39,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 chrome.action.onClicked.addListener((tab) => {
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    function: main,
+    function: translate,
     args: [MODE.DEFAULT],
   });
 });

@@ -1,4 +1,4 @@
-export async function main(mode = MODE.DEFAULT) {
+export async function translate(mode = MODE.DEFAULT) {
   EventTarget.prototype.on = EventTarget.prototype.addEventListener;
   const $ = document.querySelector.bind(document);
   const $$ = document.querySelectorAll.bind(document);
