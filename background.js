@@ -46,6 +46,17 @@ chrome.action.onClicked.addListener((tab) => {
 });
 
 chrome.commands.onCommand.addListener(async (command) => {
+  if (command === "translate") {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true,
+    });
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: translate,
+      args: [MODE.DEFAULT],
+    });
+  }
   if (command === "copy-link") {
     await copy_link();
   }

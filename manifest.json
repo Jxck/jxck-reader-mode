@@ -17,6 +17,9 @@
     "default_popup": "popup.html"
   },
   "commands": {
+    "translate": {
+      "description": "Translate current page with default"
+    },
     "copy-link": {
       "description": "Copy current URL with Title"
     }
