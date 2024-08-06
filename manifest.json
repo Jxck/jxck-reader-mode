@@ -28,6 +28,10 @@
     {
       "matches": ["https://*.google.com/*", "https://*.google.co.jp/*"],
       "js": ["user_scripts/google.js"]
+    },
+    {
+      "matches": ["http://radiko.jp/*", "https://radiko.jp/*"],
+      "js": ["user_scripts/radiko.js"]
     }
   ]
 }
