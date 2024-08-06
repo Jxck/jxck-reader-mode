@@ -23,5 +23,11 @@
     "copy-link": {
       "description": "Copy current URL with Title"
     }
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.google.com/*", "https://*.google.co.jp/*"],
+      "js": ["user_scripts/google.js"]
+    }
+  ]
 }
