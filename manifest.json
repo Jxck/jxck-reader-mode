@@ -32,6 +32,10 @@
     {
       "matches": ["http://radiko.jp/*", "https://radiko.jp/*"],
       "js": ["user_scripts/radiko.js"]
+    },
+    {
+      "matches": ["https://hatebu.brdr.jp/*", "https://hatenafilter.com/*"],
+      "js": ["user_scripts/hatena.js"]
     }
   ]
 }
