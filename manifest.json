@@ -37,5 +37,11 @@
       "matches": ["https://hatebu.brdr.jp/*", "https://hatenafilter.com/*"],
       "js": ["user_scripts/hatena.js"]
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["user_scripts/radiko-player.js"],
+      "matches": ["https://radiko.jp/*"]
+    }
   ]
 }
