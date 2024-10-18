@@ -8,7 +8,8 @@ export async function copy_link() {
     target: { tabId: tab.id },
     function: async () => {
       const canonical = document.querySelector("link[rel=canonical]")?.href;
-      const url = canonical || location.href;
+      const url =
+        location.href.length < canonical.length ? location.href : canonical;
       const title = document.title.trim();
 
       const html = `<ul>
