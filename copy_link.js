@@ -1,17 +1,15 @@
 export async function copy_link() {
   // get current tab
-  const [tab] = await chrome.tabs.query({
-    active: true,
-    lastFocusedWindow: true,
-  });
+  const win = await chrome.windows.getCurrent({
+    populate: true,
+    windowTypes: ["normal"],
+  })
+  const tab = win.tabs.find(t => t.active)
   const [{ result }] = await chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: async () => {
-      const canonical = document.querySelector("link[rel=canonical]")?.href;
-      const url =
-        location.href.length < canonical.length ? location.href : canonical;
+      const url = location.href
       const title = document.title.trim();
-
       const html = `<ul>
                       <li>${title}
                         <ul>
