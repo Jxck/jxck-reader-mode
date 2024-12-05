@@ -8,8 +8,26 @@ export async function copy_link() {
   const [{ result }] = await chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: async () => {
-      const url = location.href
-      const title = document.title.trim();
+
+      const url = location
+        .href
+        .replace(/\?hl=.*$/, "")
+
+      const omits = [
+        "  |  Blog  |  web.dev",
+        "  |  Google for Developers",
+        "  |  Blog  |  Chrome for Developers",
+        "  |  Google Search Central Blog",
+        " - Google Developers Blog",
+        "Google Developers Japan: ",
+        "Google Online Security Blog: ",
+        " – Firefox Nightly News",
+      ];
+      const title = omits.reduce((acc, curr) => {
+        return acc.replace(curr, "")
+      }, document.title.trim())
+
+      console.log({url, title})
       const html = `<ul>
                       <li>${title}
                         <ul>
