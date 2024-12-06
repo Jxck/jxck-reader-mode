@@ -40,6 +40,10 @@
     {
       "matches": ["https://github.com/*"],
       "js": ["user_scripts/github.js"]
+    },
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["user_scripts/youtube.js"]
     }
   ],
   "web_accessible_resources": [
