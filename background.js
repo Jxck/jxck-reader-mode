@@ -1,5 +1,5 @@
-import { translate } from "./translate.js";
-import { copy_link } from "./copy_link.js";
+import { translate } from "./background/translate.js";
+import { copy_link } from "./background/copy_link.js";
 
 const MODE = {
   CLEAR: "clear-translate",
