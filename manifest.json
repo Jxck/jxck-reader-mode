@@ -36,6 +36,10 @@
     {
       "matches": ["https://hatebu.brdr.jp/*", "https://hatenafilter.com/*"],
       "js": ["user_scripts/hatena.js"]
+    },
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["user_scripts/github.js"]
     }
   ],
   "web_accessible_resources": [
