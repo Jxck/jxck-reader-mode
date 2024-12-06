@@ -3,15 +3,12 @@ export async function copy_link() {
   const win = await chrome.windows.getCurrent({
     populate: true,
     windowTypes: ["normal"],
-  })
-  const tab = win.tabs.find(t => t.active)
+  });
+  const tab = win.tabs.find((t) => t.active);
   const [{ result }] = await chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: async () => {
-
-      const url = location
-        .href
-        .replace(/\?hl=.*$/, "")
+      const url = location.href.replace(/\?hl=.*$/, "");
 
       const omits = [
         "  |  Blog  |  web.dev",
@@ -24,10 +21,10 @@ export async function copy_link() {
         " – Firefox Nightly News",
       ];
       const title = omits.reduce((acc, curr) => {
-        return acc.replace(curr, "")
-      }, document.title.trim())
+        return acc.replace(curr, "");
+      }, document.title.trim());
 
-      console.log({url, title})
+      console.log({ url, title });
       const html = `<ul>
                       <li>${title}
                         <ul>
