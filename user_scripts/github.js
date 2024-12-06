@@ -10,13 +10,21 @@
     $(".AppHeader-globalBar").style.backgroundColor = "#990e0e";
   }
 
-  // load all hidden comment
   window.addEventListener("load", function () {
-    const $button = document.createElement("button");
-    $button.textContent = "comment";
-    $(".gh-header-actions").appendChild($button);
-    $button.on("click", () => {
+    // load all hidden comment
+    const $load = document.createElement("button");
+    $load.textContent = "comment";
+    $(".gh-header-actions").appendChild($load);
+    $load.on("click", () => {
       loadComment();
+    });
+
+    // remove all comment, only reference
+    const $refs = document.createElement("button");
+    $refs.textContent = "refs";
+    $(".gh-header-actions").appendChild($refs);
+    $refs.on("click", () => {
+      $$(".TimelineItem.js-comment-container").forEach((e) => e.remove());
     });
   });
 
