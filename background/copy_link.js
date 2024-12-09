@@ -11,9 +11,10 @@ export async function copy_link() {
       const url = location.href.replace(/\?hl=.*$/, "");
 
       const omits = [
-        "  |  Blog  |  web.dev",
-        "  |  Google for Developers",
         "  |  Blog  |  Chrome for Developers",
+        "  |  Blog  |  web.dev",
+        "  |  Chrome for Developers",
+        "  |  Google for Developers",
         "  |  Google Search Central Blog",
         " - Google Developers Blog",
         "Google Developers Japan: ",
