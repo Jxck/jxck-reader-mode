@@ -13,6 +13,7 @@ export async function copy_link() {
       const omits = [
         "  |  Blog  |  Chrome for Developers",
         "  |  Blog  |  web.dev",
+        "  |  Articles  |  web.dev",
         "  |  Chrome for Developers",
         "  |  Google for Developers",
         "  |  Google Search Central Blog",
