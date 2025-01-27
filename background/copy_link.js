@@ -21,6 +21,7 @@ export async function copy_link() {
         "Google Developers Japan: ",
         "Google Online Security Blog: ",
         " – Firefox Nightly News",
+        " | MDN Blog",
       ];
       const title = omits.reduce((acc, curr) => {
         return acc.replace(curr, "");
