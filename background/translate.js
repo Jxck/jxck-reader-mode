@@ -77,44 +77,28 @@ export async function translate(mode = MODE.DEFAULT) {
 
   async function translate_via_deepl(text, auth_key) {
     console.log("fetch deepl api");
-    const Endpoint = auth_key.endsWith(":fx")
-      ? `https://api-free.deepl.com/v2/translate`
-      : `https://api.deepl.com/v2/translate`;
-    const url = new URL(Endpoint);
-    url.searchParams.set("text", text);
-    url.searchParams.set("auth_key", auth_key);
-    url.searchParams.set("free_api", false);
-    url.searchParams.set("target_lang", "JA");
+    const url = `https://api.jxck.io/translate`
+    const body = JSON.stringify({
+      "text": [text],
+      "target_lang": "JA",
+    })
+    console.log({body})
 
-    const req = await fetch(url, { method: "post" });
-    const { translations } = await req.json();
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `DeepL-Auth-Key ${auth_key}`,
+        "Content-Type": "application/json"
+      },
+      body
+    });
+
+    const { translations } = await res.json();
     const translated = translations.map(({ text }) => text).join(" ");
     return translated;
   }
 
-  async function translate_via_gcp(text, auth_key) {
-    console.log("fetch google translate api");
-    const Endpoint = `https://translation.googleapis.com/language/translate/v2`;
-    const url = new URL(Endpoint);
-    url.searchParams.set("q", text);
-    url.searchParams.set("target", "ja");
-    url.searchParams.set("format", "text");
-    url.searchParams.set("source", "en");
-    url.searchParams.set("model", "base");
-    url.searchParams.set("key", auth_key);
-    const req = await fetch(url, { method: "post" });
-    const { data } = await req.json();
-    const translated = data.translations
-      .map(({ translatedText }) => {
-        return translatedText.replaceAll(/[！-～]/g, (c) =>
-          String.fromCharCode(c.charCodeAt(0) - 0xfee0),
-        );
-      })
-      .join(" ");
-    return translated;
-  }
-
-  async function translate(text, options) {
+   async function translate(text, options) {
     const key = await digestMessage(text);
     const cache = localStorage.getItem(key);
     if (cache) {
@@ -123,9 +107,6 @@ export async function translate(mode = MODE.DEFAULT) {
     }
 
     const translated = await (async () => {
-      if (options.gcp_api_key) {
-        return await translate_via_gcp(text, options.gcp_api_key);
-      }
       return await translate_via_deepl(text, options.deepl_auth_key);
     })();
 
@@ -224,7 +205,7 @@ export async function translate(mode = MODE.DEFAULT) {
   const encoder = new TextEncoder();
   const { promise, resolve } = Promise.withResolvers();
   chrome.storage.sync.get(
-    ["deepl_auth_key", "gcp_api_key", "text_color"],
+    ["deepl_auth_key", "text_color"],
     resolve,
   );
   const options = await promise;
