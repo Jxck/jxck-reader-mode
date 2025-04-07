@@ -47,6 +47,7 @@ chrome.action.onClicked.addListener((tab) => {
 });
 
 chrome.commands.onCommand.addListener(async (command) => {
+  console.log({command})
   if (command === "translate") {
     const [tab] = await chrome.tabs.query({
       active: true,
@@ -58,10 +59,19 @@ chrome.commands.onCommand.addListener(async (command) => {
       args: [MODE.DEFAULT],
     });
   }
+  if (command === "text-to-speech") {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true,
+    });
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: text_to_speech,
+      args: [MODE.DEFAULT],
+    });
+  }
   if (command === "copy-link") {
     await copy_link();
   }
-  if (command === "text-to-speech") {
-    await text_to_speech()
-  }
+
 });
