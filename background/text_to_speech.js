@@ -3,7 +3,14 @@ export async function text_to_speech() {
   const $ = document.querySelector.bind(document);
   const $$ = document.querySelectorAll.bind(document);
 
-
+  const { promise, resolve } = Promise.withResolvers();
+  chrome.storage.sync.get(
+    ["speech_speed"],
+    resolve,
+  );
+  const options = await promise;
+  const RATE = options.speech_speed
+  console.log({RATE})
 
   function random() {
     return btoa(Math.random()).substring(0, 10)
@@ -41,7 +48,7 @@ export async function text_to_speech() {
 
     const ssu = new SpeechSynthesisUtterance()
     ssu.lang = "ja-JP"
-    ssu.rate = 3
+    ssu.rate = RATE
     ssu.text = p.textContent
     console.log(p.textContent)
 
