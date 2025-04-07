@@ -22,6 +22,9 @@
     },
     "copy-link": {
       "description": "Copy current URL with Title"
+    },
+    "text-to-speech": {
+      "description": "Text to Speech on Page"
     }
   },
   "content_scripts": [

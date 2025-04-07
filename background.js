@@ -1,5 +1,6 @@
 import { translate } from "./background/translate.js";
 import { copy_link } from "./background/copy_link.js";
+import { text_to_speech } from "./background/text_to_speech.js";
 
 const MODE = {
   CLEAR: "clear-translate",
@@ -59,5 +60,8 @@ chrome.commands.onCommand.addListener(async (command) => {
   }
   if (command === "copy-link") {
     await copy_link();
+  }
+  if (command === "text-to-speech") {
+    await text_to_speech()
   }
 });
