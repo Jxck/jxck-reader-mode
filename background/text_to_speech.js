@@ -3,6 +3,7 @@ export async function text_to_speech() {
   const $ = document.querySelector.bind(document);
   const $$ = document.querySelectorAll.bind(document);
 
+  // パラメーターの取得
   const { promise, resolve } = Promise.withResolvers();
   chrome.storage.sync.get(
     ["speech_speed"],
@@ -12,9 +13,13 @@ export async function text_to_speech() {
   const RATE = options.speech_speed
   console.log({RATE})
 
+
+  // highlight を一意に識別するための乱数
   function random() {
     return btoa(Math.random()).substring(0, 10)
   }
+
+  // ハイライトを登録し、登録したラベルを返す
   function highlight({p}) {
     const range = new Range();
     range.setStart(p, 0);
@@ -33,6 +38,8 @@ export async function text_to_speech() {
     return label
   }
 
+  // 再生を始めた地点から、次が <p> か <ul> のときだけそのまま読み続ける
+  // それ以外は飛ばす
   function next({p}) {
     if (p.nextSibling === null) return
     if (["P", "UL"].includes(p.nextSibling.nodeName) === false) {
@@ -41,6 +48,7 @@ export async function text_to_speech() {
     speak({p: p.nextSibling})
   }
 
+  // <p> を渡すと再生を開始
   function speak({p}) {
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel()
@@ -66,17 +74,25 @@ export async function text_to_speech() {
     })
   }
 
-  $$("p:not([translate=no]):is(:not(:is(header,footer,aside) *))").forEach(
-    async (p) => {
-      p.on("click", () => {
-        speak({p})
-      })
-    },
-  );
+  function main() {
+    // 再生対象の要素にクリックを貼る
+    $$("p:not([translate=no]):is(:not(:is(header,footer,aside) *))").forEach((p) => {
+        p.on("click", () => {
+          speak({p})
+        })
+      }
+    );
+  }
 
+  // ESC と Reload は停止
   window.on("keydown", (e) => {
     if (e.key === "Escape") {
       speechSynthesis.cancel()
     }
   })
+  window.on("beforeunload", (e) => {
+    speechSynthesis.cancel()
+  })
+
+  main()
 }
