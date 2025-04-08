@@ -82,6 +82,22 @@ export async function text_to_speech() {
         })
       }
     );
+
+    // Speaker Icon を左上に表示
+    const icon = document.createElement('span')
+    icon.id = "jxck-text-to-speech-icon"
+    icon.textContent = "🔈"
+    document.styleSheets[0].insertRule(`
+      #${icon.id} {
+          display: block;
+          position: fixed;
+          top: 10;
+          left: 10;
+          font-size: 30px;
+          line-height: 30px;
+      }
+    `, 0);
+    document.body.appendChild(icon)
   }
 
   // ESC と Reload は停止
@@ -96,3 +112,6 @@ export async function text_to_speech() {
 
   main()
 }
+
+
+// `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🔈</text></svg>`
