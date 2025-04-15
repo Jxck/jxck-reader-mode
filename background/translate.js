@@ -80,7 +80,8 @@ export async function translate(mode = MODE.DEFAULT) {
     target.parentNode.insertBefore(node, target.nextSibling);
   }
 
-  async function translate({ key, text, options }) {
+  async function translate({ text, options }) {
+    const key = await digestMessage(text);
     const cache = localStorage.getItem(key);
     if (cache) {
       return cache;
@@ -88,7 +89,7 @@ export async function translate(mode = MODE.DEFAULT) {
 
     // バックグラウンドに対して翻訳をリクエスト
     chrome.runtime.sendMessage({
-      command: "translate",
+      command: "translate_via_deepl",
       key,
       text,
       options,
@@ -119,8 +120,7 @@ export async function translate(mode = MODE.DEFAULT) {
     $$("p:not([translate=no]):is(:not(:is(header,footer,aside) *))").forEach(
       async (p) => {
         const text = p.textContent;
-        const key = await digestMessage(text);
-        const translated = await translate({ key, text, options });
+        const translated = await translate({ text, options });
         const textNode = document.createElement("p");
         textNode.setAttribute("translate", "no");
         textNode.style.color = options.text_color;
@@ -135,7 +135,7 @@ export async function translate(mode = MODE.DEFAULT) {
     ).forEach(async (h) => {
       if (h.children[0]?.nodeName !== "P") {
         const text = h.textContent;
-        const translated = await translate(text, options);
+        const translated = await translate({ text, options });
         h.innerHTML += `<br><span style="color: ${options.text_color}">${translated}</span>`;
       }
     });

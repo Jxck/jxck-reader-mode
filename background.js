@@ -77,29 +77,24 @@ chrome.commands.onCommand.addListener(async (command) => {
 
 async function translate_via_deepl(text, auth_key) {
   console.log("fetch deepl api");
-  const url = `https://api.jxck.io/translate`;
-  const body = JSON.stringify({
-    text: [text],
-    target_lang: "JA",
-  });
-  console.log({ body });
+  const Endpoint = auth_key.endsWith(":fx")
+    ? `https://api-free.deepl.com/v2/translate`
+    : `https://api.deepl.com/v2/translate`;
+  const url = new URL(Endpoint);
+  url.searchParams.set("text", text);
+  url.searchParams.set("auth_key", auth_key);
+  url.searchParams.set("free_api", false);
+  url.searchParams.set("target_lang", "JA");
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `DeepL-Auth-Key ${auth_key}`,
-      "Content-Type": "application/json",
-    },
-    body,
-  });
-
-  const { translations } = await res.json();
+  const req = await fetch(url, { method: "post" });
+  const { translations } = await req.json();
   const translated = translations.map(({ text }) => text).join(" ");
   return translated;
 }
 
 chrome.runtime.onMessage.addListener(async (message, sender) => {
-  if (message.command === "translate") {
+  console.log({ message });
+  if (message.command === "translate_via_deepl") {
     // 翻訳リクエストだった場合翻訳して返す
     const translated = await (async () => {
       return await translate_via_deepl(
