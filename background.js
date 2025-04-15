@@ -47,7 +47,7 @@ chrome.action.onClicked.addListener((tab) => {
 });
 
 chrome.commands.onCommand.addListener(async (command) => {
-  console.log({command})
+  console.log({ command });
   if (command === "translate") {
     const [tab] = await chrome.tabs.query({
       active: true,
@@ -73,5 +73,4 @@ chrome.commands.onCommand.addListener(async (command) => {
   if (command === "copy-link") {
     await copy_link();
   }
-
 });

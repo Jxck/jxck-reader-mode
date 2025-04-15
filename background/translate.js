@@ -78,20 +78,20 @@ export async function translate(mode = MODE.DEFAULT) {
 
   async function translate_via_deepl(text, auth_key) {
     console.log("fetch deepl api");
-    const url = `https://api.jxck.io/translate`
+    const url = `https://api.jxck.io/translate`;
     const body = JSON.stringify({
-      "text": [text],
-      "target_lang": "JA",
-    })
-    console.log({body})
+      text: [text],
+      target_lang: "JA",
+    });
+    console.log({ body });
 
     const res = await fetch(url, {
       method: "POST",
       headers: {
-        "Authorization": `DeepL-Auth-Key ${auth_key}`,
-        "Content-Type": "application/json"
+        Authorization: `DeepL-Auth-Key ${auth_key}`,
+        "Content-Type": "application/json",
       },
-      body
+      body,
     });
 
     const { translations } = await res.json();
@@ -99,11 +99,10 @@ export async function translate(mode = MODE.DEFAULT) {
     return translated;
   }
 
-   async function translate(text, options) {
+  async function translate(text, options) {
     const key = await digestMessage(text);
     const cache = localStorage.getItem(key);
     if (cache) {
-      // console.log("cache hit")
       return spacer(cache);
     }
 
@@ -130,7 +129,6 @@ export async function translate(mode = MODE.DEFAULT) {
     //  複数の場合は :is() で列挙する
     $$("p:not([translate=no]):is(:not(:is(header,footer,aside) *))").forEach(
       async (p) => {
-        // console.log({p})
         const text = p.textContent;
         const translated = await translate(text, options);
         const textNode = document.createElement("p");

@@ -2,15 +2,9 @@ EventTarget.prototype.on = EventTarget.prototype.addEventListener;
 const $ = document.querySelector.bind(document);
 
 document.addEventListener("DOMContentLoaded", (e) => {
-  chrome.storage.sync.get([
-    "deepl_auth_key",
-    "text_color",
-    "speech_speed"
-  ], ({
-    deepl_auth_key,
-    text_color,
-    speech_speed
-  }) => {
+  chrome.storage.sync.get(
+    ["deepl_auth_key", "text_color", "speech_speed"],
+    ({ deepl_auth_key, text_color, speech_speed }) => {
       if (deepl_auth_key) {
         $("#deepl_auth_key").value = deepl_auth_key;
       }
@@ -35,5 +29,5 @@ $("#options").on("submit", (e) => {
 });
 
 $("input[type=range]").on("change", (e) => {
-  $("output.speech_speed").textContent = e.target.value
-})
+  $("output.speech_speed").textContent = e.target.value;
+});
