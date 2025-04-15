@@ -2,6 +2,7 @@ export async function translate(mode = MODE.DEFAULT) {
   EventTarget.prototype.on = EventTarget.prototype.addEventListener;
   const $ = document.querySelector.bind(document);
   const $$ = document.querySelectorAll.bind(document);
+  const encoder = new TextEncoder();
 
   const MODE = {
     CLEAR: "clear-translate",
@@ -202,12 +203,11 @@ export async function translate(mode = MODE.DEFAULT) {
     }
   }
 
-  const encoder = new TextEncoder();
-  const { promise, resolve } = Promise.withResolvers();
-  chrome.storage.sync.get(
-    ["deepl_auth_key", "text_color"],
-    resolve,
-  );
-  const options = await promise;
-  traverse(mode, options);
+  async function main() {
+    const { promise, resolve } = Promise.withResolvers();
+    chrome.storage.sync.get(["deepl_auth_key", "text_color"], resolve);
+    const options = await promise;
+    traverse(mode, options);
+  }
+  main();
 }
