@@ -74,3 +74,44 @@ chrome.commands.onCommand.addListener(async (command) => {
     await copy_link();
   }
 });
+
+async function translate_via_deepl(text, auth_key) {
+  console.log("fetch deepl api");
+  const url = `https://api.jxck.io/translate`;
+  const body = JSON.stringify({
+    text: [text],
+    target_lang: "JA",
+  });
+  console.log({ body });
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `DeepL-Auth-Key ${auth_key}`,
+      "Content-Type": "application/json",
+    },
+    body,
+  });
+
+  const { translations } = await res.json();
+  const translated = translations.map(({ text }) => text).join(" ");
+  return translated;
+}
+
+chrome.runtime.onMessage.addListener(async (message, sender) => {
+  if (message.command === "translate") {
+    // 翻訳リクエストだった場合翻訳して返す
+    const translated = await (async () => {
+      return await translate_via_deepl(
+        message.text,
+        message.options.deepl_auth_key,
+      );
+    })();
+
+    console.log({ translated });
+    chrome.tabs.sendMessage(sender.tab.id, {
+      key: message.key,
+      translated,
+    });
+  }
+});

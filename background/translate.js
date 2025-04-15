@@ -76,51 +76,40 @@ export async function translate(mode = MODE.DEFAULT) {
     return hash;
   }
 
-  async function translate_via_deepl(text, auth_key) {
-    console.log("fetch deepl api");
-    const url = `https://api.jxck.io/translate`;
-    const body = JSON.stringify({
-      text: [text],
-      target_lang: "JA",
-    });
-    console.log({ body });
-
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `DeepL-Auth-Key ${auth_key}`,
-        "Content-Type": "application/json",
-      },
-      body,
-    });
-
-    const { translations } = await res.json();
-    const translated = translations.map(({ text }) => text).join(" ");
-    return translated;
-  }
-
-  async function translate(text, options) {
-    const key = await digestMessage(text);
-    const cache = localStorage.getItem(key);
-    if (cache) {
-      return spacer(cache);
-    }
-
-    const translated = await (async () => {
-      return await translate_via_deepl(text, options.deepl_auth_key);
-    })();
-
-    localStorage.setItem(key, translated);
-    return spacer(translated);
-  }
-
   function appendChild(target, node) {
     target.parentNode.insertBefore(node, target.nextSibling);
   }
 
-  function traverse(mode, options) {
-    console.log("traverse");
+  async function translate({ key, text, options }) {
+    const cache = localStorage.getItem(key);
+    if (cache) {
+      return cache;
+    }
 
+    // バックグラウンドに対して翻訳をリクエスト
+    chrome.runtime.sendMessage({
+      command: "translate",
+      key,
+      text,
+      options,
+    });
+
+    const { promise, resolve } = Promise.withResolvers();
+
+    // バックグラウンドからの翻訳レスポンスを受取り
+    // 送ったのと同じ Key だったらキャッシュして resolve
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.key === key) {
+        const translated = spacer(message.translated);
+        localStorage.setItem(key, translated);
+        resolve(translated);
+      }
+    });
+
+    return promise;
+  }
+
+  function traverse(mode, options) {
     /** Pre Edit */
     PLUGINS[location.host]?.();
 
@@ -130,7 +119,8 @@ export async function translate(mode = MODE.DEFAULT) {
     $$("p:not([translate=no]):is(:not(:is(header,footer,aside) *))").forEach(
       async (p) => {
         const text = p.textContent;
-        const translated = await translate(text, options);
+        const key = await digestMessage(text);
+        const translated = await translate({ key, text, options });
         const textNode = document.createElement("p");
         textNode.setAttribute("translate", "no");
         textNode.style.color = options.text_color;
@@ -202,6 +192,7 @@ export async function translate(mode = MODE.DEFAULT) {
   }
 
   async function main() {
+    console.log("main");
     const { promise, resolve } = Promise.withResolvers();
     chrome.storage.sync.get(["deepl_auth_key", "text_color"], resolve);
     const options = await promise;
