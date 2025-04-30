@@ -47,6 +47,10 @@
     {
       "matches": ["https://www.youtube.com/*"],
       "js": ["user_scripts/youtube.js"]
+    },
+    {
+      "matches": ["https://tver.jp/*"],
+      "js": ["user_scripts/tver.js"]
     }
   ],
   "web_accessible_resources": [
