@@ -10,11 +10,16 @@
     $(".AppHeader-globalBar").style.backgroundColor = "#990e0e";
   }
 
+  // header button container
+  const $headerMenuContainer = [
+    ...$$(`[class*="HeaderMenu-module__buttonContainer"]`),
+  ].at(-1);
+
   window.addEventListener("load", function () {
     // load all hidden comment
     const $load = document.createElement("button");
     $load.textContent = "comment";
-    $(".gh-header-actions").appendChild($load);
+    $headerMenuContainer.appendChild($load);
     $load.on("click", () => {
       loadComment();
     });
@@ -22,7 +27,7 @@
     // remove all comment, only reference
     const $refs = document.createElement("button");
     $refs.textContent = "refs";
-    $(".gh-header-actions").appendChild($refs);
+    $headerMenuContainer.appendChild($refs);
     $refs.on("click", () => {
       $$(".TimelineItem.js-comment-container").forEach((e) => e.remove());
     });
@@ -30,7 +35,7 @@
 
   function loadComment() {
     console.log("loadComment");
-    const $button = $(".ajax-pagination-btn[data-disable-with]");
+    const $button = $(`[class^="LoadMore-module__buttonChildrenWrapper"]`);
     if (!$button) return console.log("all comments loaded");
     $button.click();
     setTimeout(loadComment, 500);
