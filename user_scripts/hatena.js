@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const blacklist = ["anond.hatelabo.jp", "togetter.com", "b.hatena.ne.jp"];
+  const blacklist = ["anond.hatelabo.jp", "togetter.com", "b.hatena.ne.jp", "syu-m-5151.hatenablog.com"];
 
   // 俺のはてブ
   if (location.href.startsWith("https://hatebu.brdr.jp")) {
