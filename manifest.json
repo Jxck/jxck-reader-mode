@@ -2,7 +2,7 @@
   "version": "5.4",
   "name": "jxck-reader-mode",
   "icons": {
-    "128": "./assets/128x128.png"
+    "128": "assets/128x128.png"
   },
   "manifest_version": 3,
   "description": "Make web page readable for Japanese developer",
