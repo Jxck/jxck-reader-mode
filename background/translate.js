@@ -169,6 +169,12 @@ export async function translate(mode = MODE.DEFAULT) {
           return section;
         });
 
+        if (sections.length > options.translate_limit) {
+          if (!confirm(`翻訳対象が ${sections.length} 件です。実行しますか?`)) {
+            return;
+          }
+        }
+
         pre.innerHTML = "";
 
         // セクションごとに翻訳
@@ -194,7 +200,10 @@ export async function translate(mode = MODE.DEFAULT) {
   async function main() {
     console.log("main");
     const { promise, resolve } = Promise.withResolvers();
-    chrome.storage.sync.get(["deepl_auth_key", "text_color"], resolve);
+    chrome.storage.sync.get(
+      ["deepl_auth_key", "text_color", "translate_limit"],
+      resolve,
+    );
     const options = await promise;
     traverse(mode, options);
   }
