@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "fmt": "prettier -w ."
+    "fmt": "oxfmt"
   },
   "devDependencies": {
-    "prettier": "^3.7.4"
+    "oxfmt": "^0.42.0"
   }
 }
