@@ -11,9 +11,7 @@
   }
 
   // header button container
-  const $headerMenuContainer = [
-    ...$$(`[class*="HeaderMenu-module__buttonContainer"]`),
-  ].at(-1);
+  const $headerMenuContainer = [...$$(`[class*="HeaderMenu-module__buttonContainer"]`)].at(-1);
 
   window.addEventListener("load", function () {
     // load all hidden comment

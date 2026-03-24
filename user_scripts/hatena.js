@@ -24,9 +24,7 @@
 
   // はてなフィルター
   if (location.href.startsWith("https://hatenafilter.com")) {
-    Array.from(
-      document.querySelectorAll("div.entry > div.title > a[target='_blank']"),
-    )
+    Array.from(document.querySelectorAll("div.entry > div.title > a[target='_blank']"))
       .filter((e) => {
         const href = new URL(e.href);
         return blacklist.includes(href.host);

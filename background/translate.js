@@ -60,10 +60,8 @@ export async function translate(mode = MODE.DEFAULT) {
   }
 
   function spacer(text) {
-    const FULL_HALF =
-      /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu;
-    const HALF_FULL =
-      /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu;
+    const FULL_HALF = /(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)(?<half>[\p{ASCII}]+)/gu;
+    const HALF_FULL = /(?<half>[\p{ASCII}]+)(?<full>[\p{sc=Hira}\p{sc=Kana}\p{sc=Han}]+)/gu;
     return text
       .replaceAll(FULL_HALF, (all, left, right) => `${left} ${right}`)
       .replaceAll(HALF_FULL, (all, left, right) => `${left} ${right}`);
@@ -117,17 +115,15 @@ export async function translate(mode = MODE.DEFAULT) {
     // 全ての <p> を翻訳し、下に <p> を作って追加
     //  header の下じゃない h1 は h1:not(header h1) のように指定する
     //  複数の場合は :is() で列挙する
-    $$("p:not([translate=no]):is(:not(:is(header,footer,aside) *))").forEach(
-      async (p) => {
-        const text = p.textContent;
-        const translated = await translate({ text, options });
-        const textNode = document.createElement("p");
-        textNode.setAttribute("translate", "no");
-        textNode.style.color = options.text_color;
-        textNode.textContent = translated;
-        appendChild(p, textNode);
-      },
-    );
+    $$("p:not([translate=no]):is(:not(:is(header,footer,aside) *))").forEach(async (p) => {
+      const text = p.textContent;
+      const translated = await translate({ text, options });
+      const textNode = document.createElement("p");
+      textNode.setAttribute("translate", "no");
+      textNode.style.color = options.text_color;
+      textNode.textContent = translated;
+      appendChild(p, textNode);
+    });
 
     // h2 ~ h6, li, th, td は、 <p> 追加ではなく <br> で追記
     $$(
@@ -179,9 +175,7 @@ export async function translate(mode = MODE.DEFAULT) {
 
         // セクションごとに翻訳
         for await (const section of sections) {
-          const translated = (await translate(section, options))
-            .replaceAll("\n ", "\n")
-            .trim();
+          const translated = (await translate(section, options)).replaceAll("\n ", "\n").trim();
           console.log({ translated });
 
           const textNode = document.createElement("p");
@@ -200,10 +194,7 @@ export async function translate(mode = MODE.DEFAULT) {
   async function main() {
     console.log("main");
     const { promise, resolve } = Promise.withResolvers();
-    chrome.storage.sync.get(
-      ["deepl_auth_key", "text_color", "translate_limit"],
-      resolve,
-    );
+    chrome.storage.sync.get(["deepl_auth_key", "text_color", "translate_limit"], resolve);
     const options = await promise;
     traverse(mode, options);
   }

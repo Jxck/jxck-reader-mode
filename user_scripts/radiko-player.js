@@ -5,9 +5,7 @@ function main() {
     const $url = document.querySelector("#url");
     const url = new URL($url.value);
     const seek = url.searchParams.get("seek");
-    const update = moment(seek, "YYYYMMDDHHmmss")
-      .add(delta, "s")
-      .format("YYYYMMDDHHmmss");
+    const update = moment(seek, "YYYYMMDDHHmmss").add(delta, "s").format("YYYYMMDDHHmmss");
     url.searchParams.set("seek", update);
     play(url.toString());
 
@@ -32,9 +30,7 @@ function main() {
   };
   document.querySelector(".btn--tooltip + .tooltip").remove();
 
-  const url = new URL(
-    document.querySelector('meta[property="og:url"]').content,
-  );
+  const url = new URL(document.querySelector('meta[property="og:url"]').content);
   const search = url.searchParams;
   const t = search.get("t");
   const [all, year, month, day, _id] = t.match(/(\d{4})(\d{2})(\d{2})(\d{6})/);

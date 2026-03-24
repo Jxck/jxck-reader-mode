@@ -17,9 +17,7 @@ async function main() {
 }
 
 function run() {
-  const headings = Array.from(
-    document.querySelectorAll("h1,h2,h3,h4,h5,h6"),
-  ).map((h) => {
+  const headings = Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6")).map((h) => {
     const level = parseInt(h.tagName.replace("H", ""));
     const text = h.textContent.trim();
     return {

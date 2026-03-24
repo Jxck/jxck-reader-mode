@@ -75,13 +75,11 @@ export async function text_to_speech() {
 
   function main() {
     // 再生対象の要素にクリックを貼る
-    $$("p:not([translate=no]):is(:not(:is(header,footer,aside) *))").forEach(
-      (p) => {
-        p.on("click", () => {
-          speak({ p });
-        });
-      },
-    );
+    $$("p:not([translate=no]):is(:not(:is(header,footer,aside) *))").forEach((p) => {
+      p.on("click", () => {
+        speak({ p });
+      });
+    });
 
     // Speaker Icon を左上に表示
     const icon = document.createElement("span");

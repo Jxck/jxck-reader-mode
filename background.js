@@ -106,10 +106,7 @@ chrome.runtime.onMessage.addListener(async (message, sender) => {
   if (message.command === "translate_via_deepl") {
     // 翻訳リクエストだった場合翻訳して返す
     const translated = await (async () => {
-      return await translate_via_deepl(
-        message.text,
-        message.options.deepl_auth_key,
-      );
+      return await translate_via_deepl(message.text, message.options.deepl_auth_key);
     })();
 
     console.log({ translated });
