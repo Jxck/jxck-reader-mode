@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "fmt": "oxfmt"
+    "fmt": "oxfmt",
+    "zip": "zsh zip.sh"
   },
   "devDependencies": {
     "oxfmt": "^0.42.0"
