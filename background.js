@@ -77,16 +77,25 @@ chrome.commands.onCommand.addListener(async (command) => {
 
 async function translate_via_deepl(text, auth_key) {
   console.log("fetch deepl api");
-  const Endpoint = auth_key.endsWith(":fx")
+  const is_free = auth_key.endsWith(":fx");
+  const Endpoint = is_free
     ? `https://api-free.deepl.com/v2/translate`
     : `https://api.deepl.com/v2/translate`;
   const url = new URL(Endpoint);
-  url.searchParams.set("text", text);
-  url.searchParams.set("auth_key", auth_key);
-  url.searchParams.set("free_api", false);
-  url.searchParams.set("target_lang", "JA");
-
-  const req = await fetch(url, { method: "post" });
+  const body = {
+    text: [text],
+    source_lang: "EN",
+    target_lang: "JA",
+    glossary_id: "d4a94604-8e97-46a9-8621-b6bf5f1f7f0d",
+  };
+  const req = await fetch(url, {
+    method: "post",
+    headers: {
+      Authorization: `DeepL-Auth-Key ${auth_key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
   const { translations } = await req.json();
   const translated = translations.map(({ text }) => text).join(" ");
   return translated;
