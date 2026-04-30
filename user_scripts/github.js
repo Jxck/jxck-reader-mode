@@ -5,19 +5,18 @@
   EventTarget.prototype.on = EventTarget.prototype.addEventListener;
 
   // private repo to red
+  const $header = $("header");
   const Private = $(".octicon-lock");
   if (Private) {
-    $(".AppHeader-globalBar").style.backgroundColor = "#990e0e";
+    $header.style.backgroundColor = "#990e0e";
   }
 
-  // header button container
-  const $headerMenuContainer = [...$$(`[class*="HeaderMenu-module__buttonContainer"]`)].at(-1);
-
+  const $main = $("main");
   window.addEventListener("load", function () {
     // load all hidden comment
     const $load = document.createElement("button");
     $load.textContent = "comment";
-    $headerMenuContainer.appendChild($load);
+    $main.prepend($load);
     $load.on("click", () => {
       loadComment();
     });
@@ -25,17 +24,17 @@
     // remove all comment, only reference
     const $refs = document.createElement("button");
     $refs.textContent = "refs";
-    $headerMenuContainer.appendChild($refs);
+    $main.prepend($refs);
     $refs.on("click", () => {
-      $$(".TimelineItem.js-comment-container").forEach((e) => e.remove());
+      $$(".react-issue-comment ").forEach((e) => e.remove());
     });
   });
 
   function loadComment() {
     console.log("loadComment");
-    const $button = $(`[class^="LoadMore-module__buttonChildrenWrapper"]`);
-    if (!$button) return console.log("all comments loaded");
-    $button.click();
+    const $loadMore = $("[data-testid=issue-timeline-load-more-load-top]");
+    if (!$loadMore) return console.log("all comments loaded");
+    $loadMore.click();
     setTimeout(loadComment, 500);
   }
 })();
